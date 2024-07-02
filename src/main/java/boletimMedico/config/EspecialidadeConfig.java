@@ -5,6 +5,7 @@ import boletimMedico.application.useCases.especialidade.EspecialidadeInteractor;
 import boletimMedico.infra.controller.especialidade.EspecialidadeMapper;
 import boletimMedico.infra.gateways.especialidade.EspecialidadeRepository;
 import boletimMedico.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
+import boletimMedico.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
 import boletimMedico.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimMedico.infra.persitence.especialidade.entities.EspecialidadeEntity;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +25,18 @@ public class EspecialidadeConfig {
     }
 
     @Bean
-    IEspecialidadeRepository especialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepository, EspecialidadeEntityMapper mapper) {
-        return new EspecialidadeRepository(especialidadeRepository, mapper);
+    IEspecialidadeRepository especialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepository, EspecialidadeEntityMapper especialidadeEntityMapper, ResultadoMensalEspecialidadeMapper resultadoMensalEspecialidadeMapper) {
+        return new EspecialidadeRepository(especialidadeRepository, especialidadeEntityMapper, resultadoMensalEspecialidadeMapper);
     }
 
     @Bean
     EspecialidadeEntityMapper especialidadeEntityMapper() {
         return new EspecialidadeEntityMapper();
+    }
+
+    @Bean
+    ResultadoMensalEspecialidadeMapper resultadoMensalEspecialidadeMapper() {
+        return new ResultadoMensalEspecialidadeMapper();
     }
 
     @Bean

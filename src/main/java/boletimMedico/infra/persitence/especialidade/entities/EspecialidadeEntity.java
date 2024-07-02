@@ -32,6 +32,15 @@ public class EspecialidadeEntity {
         this.resultadosMensais = resultadosMensais;
     }
 
+    public EspecialidadeEntity(Long id, String especialidade, String medicoAtual, int metaDiariaAtual, int metaMensalAtual, List<ResultadoMensalEspecialidadeEntity> resultadosMensais) {
+        this.id = id;
+        this.especialidade = especialidade;
+        this.medicoAtual = medicoAtual;
+        this.metaDiariaAtual = metaDiariaAtual;
+        this.metaMensalAtual = metaMensalAtual;
+        this.resultadosMensais = resultadosMensais;
+    }
+
     public EspecialidadeEntity() {}
 
     public Long getId() { return id; }
