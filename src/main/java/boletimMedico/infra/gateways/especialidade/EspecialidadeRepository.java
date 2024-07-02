@@ -5,8 +5,11 @@ import boletimMedico.domain.especialidade.Especialidade;
 import boletimMedico.exceptions.NotFoundException;
 import boletimMedico.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimMedico.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
+import boletimMedico.infra.persitence.especialidade.entities.EspecialidadeEntity;
 
 import java.util.List;
+
+import static boletimMedico.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper.toDomainList;
 
 public class EspecialidadeRepository implements IEspecialidadeRepository {
 
@@ -26,6 +29,16 @@ public class EspecialidadeRepository implements IEspecialidadeRepository {
     @Override
     public List<Especialidade> buscarTodasEspecialidades() {
         return mapper.toDomainList(especialidadeRepository.findAll());
+    }
+
+    @Override
+    public Especialidade editarEspecialidade(Long id, Especialidade especialidade) {
+        EspecialidadeEntity entity = especialidadeRepository.findById(id)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("ID %s não econtrado", id)));
+
+        return EspecialidadeEntityMapper.toDomain(especialidadeRepository.save(entity));
     }
 
     @Override

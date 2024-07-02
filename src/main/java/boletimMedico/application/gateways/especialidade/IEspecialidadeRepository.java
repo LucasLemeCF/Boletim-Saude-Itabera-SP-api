@@ -10,6 +10,8 @@ public interface IEspecialidadeRepository {
 
     List<Especialidade> buscarTodasEspecialidades();
 
+    Especialidade editarEspecialidade(Long id, Especialidade especialidade);
+
     String excluirEspecialidade(Long id);
 
 }

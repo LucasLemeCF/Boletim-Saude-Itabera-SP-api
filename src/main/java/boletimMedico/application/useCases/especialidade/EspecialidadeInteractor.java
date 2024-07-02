@@ -21,6 +21,10 @@ public class EspecialidadeInteractor {
         return especialidadeRepository.buscarTodasEspecialidades();
     }
 
+    public Especialidade editarEspecialidade(Long id, Especialidade especialidade) {
+        return especialidadeRepository.editarEspecialidade(id, especialidade);
+    }
+
     public String excluirEspecialidade(Long id) {
         return especialidadeRepository.excluirEspecialidade(id);
     }

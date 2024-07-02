@@ -1,6 +1,7 @@
 package boletimMedico.infra.controller.especialidade;
 import boletimMedico.application.useCases.especialidade.EspecialidadeInteractor;
 import boletimMedico.domain.especialidade.Especialidade;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,22 @@ public class EspecialidadeController {
 
     @PostMapping
     public ResponseEntity<Especialidade> criarEspecialidade(@RequestBody EspecialidadeRequest request) {
-        return ResponseEntity.ok().body(especialidadeInteractor.criarEspecialidade(EspecialidadeMapper.toDomain(request)));
+        Especialidade especialidade = especialidadeInteractor.criarEspecialidade(EspecialidadeMapper.toDomain(request));
+        return ResponseEntity.ok().body(especialidade);
     }
 
     @GetMapping
     public ResponseEntity<List<Especialidade>> buscarTodasEspecialidade() {
         return ResponseEntity.ok().body(especialidadeInteractor.buscarTodasEspecialidades());
+    }
+
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<Especialidade> editarEspecialidade(
+            @PathVariable(value="id") Long id,
+            @Valid @RequestBody EspecialidadeRequest request
+    ) {
+        Especialidade especialidade = especialidadeInteractor.editarEspecialidade(id, EspecialidadeMapper.toDomain(request));
+        return ResponseEntity.ok().body(especialidade);
     }
 
     @DeleteMapping("/{id}")
