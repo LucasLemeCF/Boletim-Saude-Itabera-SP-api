@@ -1,8 +1,11 @@
 package boletimdasaude.infra.controller.cirurgiao;
 import boletimdasaude.application.useCases.cirurgiao.CirurgiaoInteractor;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/cirurgiao")
@@ -21,23 +24,23 @@ public class CirurgiaoController {
         return ResponseEntity.ok().body(cirurgiao);
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<Cirurgiao>> buscarTodasCirurgiao() {
-//        return ResponseEntity.ok().body(cirurgiaoInteractor.buscarTodasCirurgiaos());
-//    }
+    @GetMapping
+    public ResponseEntity<List<Cirurgiao>> buscarTodosCirurgioes() {
+        return ResponseEntity.ok().body(cirurgiaoInteractor.buscarTodosCirurgioes());
+    }
 
-//    @PatchMapping(path = "/{id}")
-//    public ResponseEntity<Cirurgiao> editarCirurgiao(
-//            @PathVariable(value="id") Long id,
-//            @Valid @RequestBody CirurgiaoRequest request
-//    ) {
-//        Cirurgiao cirurgiao = cirurgiaoInteractor.editarCirurgiao(id, CirurgiaoMapper.toDomain(request));
-//        return ResponseEntity.ok().body(cirurgiao);
-//    }
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<Cirurgiao> editarCirurgiao(
+            @PathVariable(value="id") Long id,
+            @Valid @RequestBody CirurgiaoRequest request
+    ) {
+        Cirurgiao cirurgiao = cirurgiaoInteractor.editarCirurgiao(id, CirurgiaoMapper.toDomain(request));
+        return ResponseEntity.ok().body(cirurgiao);
+    }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<String> excluirCirurgiao(@PathVariable(value="id") Long id) {
-//        return ResponseEntity.ok().body(cirurgiaoInteractor.excluirCirurgiao(id));
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> excluirCirurgiao(@PathVariable(value="id") Long id) {
+        return ResponseEntity.ok().body(cirurgiaoInteractor.excluirCirurgiao(id));
+    }
 
 }

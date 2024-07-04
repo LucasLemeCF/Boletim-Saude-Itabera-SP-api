@@ -29,7 +29,7 @@ public class CirurgiaoRepository implements ICirurgiaoRepository {
     }
 
     @Override
-    public List<Cirurgiao> buscarTodasCirurgiaos() {
+    public List<Cirurgiao> buscarTodosCirurgioes() {
         return cirurgiaoEntityMapper.toDomainList(cirurgiaoRepository.findAll());
     }
 
@@ -55,7 +55,7 @@ public class CirurgiaoRepository implements ICirurgiaoRepository {
         return cirurgiaoRepository.findById(id)
                 .map(cirurgiao -> {
                     cirurgiaoRepository.delete(cirurgiao);
-                    return "Cirurgiao excluida com sucesso";
+                    return "Cirurgiao excluido com sucesso";
                 })
                 .orElseThrow(() -> new NotFoundException(String.format("ID %s não encontrado", id))
         );

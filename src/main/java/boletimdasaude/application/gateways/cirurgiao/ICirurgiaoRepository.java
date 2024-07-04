@@ -8,7 +8,7 @@ public interface ICirurgiaoRepository {
 
     Cirurgiao criarCirurgiao(Cirurgiao cirurgiao);
 
-    List<Cirurgiao> buscarTodasCirurgiaos();
+    List<Cirurgiao> buscarTodosCirurgioes();
 
     Cirurgiao editarCirurgiao(Long id, Cirurgiao cirurgiao);
 

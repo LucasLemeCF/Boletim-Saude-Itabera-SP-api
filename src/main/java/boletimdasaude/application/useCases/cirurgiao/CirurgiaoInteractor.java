@@ -17,8 +17,8 @@ public class CirurgiaoInteractor {
         return cirurgiaoRepository.criarCirurgiao(cirurgiao);
     }
 
-    public List<Cirurgiao> buscarTodasCirurgiaos() {
-        return cirurgiaoRepository.buscarTodasCirurgiaos();
+    public List<Cirurgiao> buscarTodosCirurgioes() {
+        return cirurgiaoRepository.buscarTodosCirurgioes();
     }
 
     public Cirurgiao editarCirurgiao(Long id, Cirurgiao cirurgiao) {
