@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+
+  app:
+    container_name: boletim-da-saude-api
+    build: .
+    environment:
+      - APPLICATION_PROFILE=dev
+      - POSTGRES_URL=jdbc:postgresql://database:5432/BoletimMedico
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
+  database:
+    container_name: postgres
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=BoletimMedico
+    ports:
+      - "5432:5432"

@@ -1,0 +1,32 @@
+spring:
+  profiles:
+    active: ${APPLICATION_PROFILE}
+
+  application:
+    name: boletim-da-saude
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          lab:
+            non_contextual_creation: true
+
+server:
+  servlet:
+    context-path: /api
+    port: 8080
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
