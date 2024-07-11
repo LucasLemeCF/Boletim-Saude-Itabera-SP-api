@@ -8,7 +8,7 @@ services:
       - APPLICATION_PROFILE=dev
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_URL=jdbc:postgresql://database:5432/boletimmedico
+      - POSTGRES_URL=jdbc:postgresql://postgres:5432/BoletimMedico
     ports:
       - "8080:8080"
     depends_on:
@@ -20,6 +20,6 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=boletimmedico
+      - POSTGRES_DB=BoletimMedico
     ports:
       - "5432:5432"

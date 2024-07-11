@@ -1,4 +1,4 @@
-package boletimdasaude.application.useCases.especialidade;
+package boletimdasaude.application.usecases.especialidade;
 
 import boletimdasaude.application.gateways.especialidade.IEspecialidadeRepository;
 import boletimdasaude.domain.especialidade.Especialidade;

@@ -1,5 +1,5 @@
 package boletimdasaude.infra.controller.cirurgiao;
-import boletimdasaude.application.useCases.cirurgiao.CirurgiaoInteractor;
+import boletimdasaude.application.usecases.cirurgiao.CirurgiaoInteractor;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

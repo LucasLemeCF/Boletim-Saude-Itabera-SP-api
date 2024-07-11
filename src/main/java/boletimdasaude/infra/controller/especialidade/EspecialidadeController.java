@@ -1,5 +1,5 @@
 package boletimdasaude.infra.controller.especialidade;
-import boletimdasaude.application.useCases.especialidade.EspecialidadeInteractor;
+import boletimdasaude.application.usecases.especialidade.EspecialidadeInteractor;
 import boletimdasaude.domain.especialidade.Especialidade;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

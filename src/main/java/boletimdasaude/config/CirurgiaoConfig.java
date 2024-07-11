@@ -1,7 +1,7 @@
 package boletimdasaude.config;
 
 import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
-import boletimdasaude.application.useCases.cirurgiao.CirurgiaoInteractor;
+import boletimdasaude.application.usecases.cirurgiao.CirurgiaoInteractor;
 import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.CirurgiaoEntityMapper;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;

@@ -12,29 +12,29 @@ import java.util.List;
 
 public class EspecialidadeRepository implements IEspecialidadeRepository {
 
-    private final IEspecialidadeRepositoryJpa especialidadeRepository;
+    private final IEspecialidadeRepositoryJpa repository;
     private final EspecialidadeEntityMapper especialidadeEntityMapper;
     private final ResultadoMensalEspecialidadeMapper resultadoMensalEspecialidadeMapper;
 
-    public EspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepository, EspecialidadeEntityMapper especialidadeEntityMapper, ResultadoMensalEspecialidadeMapper resultadoMensalEspecialidadeMapper) {
-        this.especialidadeRepository = especialidadeRepository;
+    public EspecialidadeRepository(IEspecialidadeRepositoryJpa repository, EspecialidadeEntityMapper especialidadeEntityMapper, ResultadoMensalEspecialidadeMapper resultadoMensalEspecialidadeMapper) {
+        this.repository = repository;
         this.especialidadeEntityMapper = especialidadeEntityMapper;
         this.resultadoMensalEspecialidadeMapper = resultadoMensalEspecialidadeMapper;
     }
 
     @Override
     public Especialidade criarEspecialidade(Especialidade especialidade) {
-        return EspecialidadeEntityMapper.toDomain(especialidadeRepository.save(especialidadeEntityMapper.toEntity(especialidade)));
+        return EspecialidadeEntityMapper.toDomain(repository.save(especialidadeEntityMapper.toEntity(especialidade)));
     }
 
     @Override
     public List<Especialidade> buscarTodasEspecialidades() {
-        return especialidadeEntityMapper.toDomainList(especialidadeRepository.findAll());
+        return especialidadeEntityMapper.toDomainList(repository.findAll());
     }
 
     @Override
     public Especialidade editarEspecialidade(Long id, Especialidade especialidade) {
-        EspecialidadeEntity oldEntity = especialidadeRepository.findById(id)
+        EspecialidadeEntity oldEntity = repository.findById(id)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(String.format("ID %s não econtrado", id))
@@ -49,14 +49,14 @@ public class EspecialidadeRepository implements IEspecialidadeRepository {
                 resultadoMensalEspecialidadeMapper.toEntityList(especialidade.resultadosMensais())
         );
 
-        return EspecialidadeEntityMapper.toDomain(especialidadeRepository.save(newEntity));
+        return EspecialidadeEntityMapper.toDomain(repository.save(newEntity));
     }
 
     @Override
     public String excluirEspecialidade(Long id) {
-        return especialidadeRepository.findById(id)
+        return repository.findById(id)
                 .map(especialidade -> {
-                    especialidadeRepository.delete(especialidade);
+                    repository.delete(especialidade);
                     return "Especialidade excluida com sucesso";
                 })
                 .orElseThrow(() -> new NotFoundException(String.format("ID %s não encontrado", id)));

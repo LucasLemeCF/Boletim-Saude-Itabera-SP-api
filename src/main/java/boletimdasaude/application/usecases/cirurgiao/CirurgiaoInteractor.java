@@ -1,4 +1,4 @@
-package boletimdasaude.application.useCases.cirurgiao;
+package boletimdasaude.application.usecases.cirurgiao;
 
 import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
