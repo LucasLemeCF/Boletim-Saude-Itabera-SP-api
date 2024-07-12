@@ -1,15 +1,17 @@
 package boletimdasaude.config;
 
-import boletimdasaude.application.gateways.tabela.ITabelaRepository;
-import boletimdasaude.application.usecases.tabela.EditarTabelaInteractor;
-import boletimdasaude.infra.gateways.tabela.TabelaRepository;
-import boletimdasaude.infra.gateways.tabela.mappers.ItemTabelaCirurgiaoEntityMapper;
-import boletimdasaude.infra.gateways.tabela.mappers.ItemTabelaEspecialidadeEntityMapper;
-import boletimdasaude.infra.gateways.tabela.mappers.OrdemTabelaEntityMapper;
-import boletimdasaude.infra.persitence.tabela.IItemTabelaCirurgiaoRepositoryJpa;
-import boletimdasaude.infra.persitence.tabela.IItemTabelaEspecialidadeRepositoryJpa;
-import boletimdasaude.infra.persitence.tabela.ITabelaRepositoryJpa;
-import boletimdasaude.infra.persitence.tabela.entities.OrdemTabelaEntity;
+import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
+import boletimdasaude.application.usecases.ordemtabela.EditarOrdemTabelaInteractor;
+import boletimdasaude.infra.gateways.ordemtabela.OrdemTabelaRepository;
+import boletimdasaude.infra.gateways.ordemtabela.mappers.CabecalhoTabelaEntityMapper;
+import boletimdasaude.infra.gateways.ordemtabela.mappers.LinhaTabelaEntityMapper;
+import boletimdasaude.infra.gateways.ordemtabela.mappers.OrdemTabelaEntityMapper;
+import boletimdasaude.infra.gateways.ordemtabela.mappers.TextoCabecalhoTabelaEntityMapper;
+import boletimdasaude.infra.persitence.ordemtabela.ICabecalhoTabelaRepositoryJpa;
+import boletimdasaude.infra.persitence.ordemtabela.ILinhaTabelaRepositoryJpa;
+import boletimdasaude.infra.persitence.ordemtabela.IOrdemTabelaRepositoryJpa;
+import boletimdasaude.infra.persitence.ordemtabela.ITextoCabecalhoTabelaRepositoryJpa;
+import boletimdasaude.infra.persitence.ordemtabela.entities.OrdemTabelaEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,8 +19,8 @@ import org.springframework.context.annotation.Configuration;
 public class OrdemTabelaConfig {
 
     @Bean
-    EditarTabelaInteractor atualizarTabela(ITabelaRepository tabelaRepository) {
-        return new EditarTabelaInteractor(tabelaRepository);
+    EditarOrdemTabelaInteractor atualizarTabela(IOrdemTabelaRepository tabelaRepository) {
+        return new EditarOrdemTabelaInteractor(tabelaRepository);
     }
 
     @Bean
@@ -27,8 +29,10 @@ public class OrdemTabelaConfig {
     }
 
     @Bean
-    ITabelaRepository tabelaRepository(ITabelaRepositoryJpa tabelaRepositoryJpa, IItemTabelaEspecialidadeRepositoryJpa itemEspecialidadeRepository, IItemTabelaCirurgiaoRepositoryJpa itemCirurgiaoRepository, OrdemTabelaEntityMapper ordemTabelaEntityMapper) {
-        return new TabelaRepository(tabelaRepositoryJpa, itemEspecialidadeRepository, itemCirurgiaoRepository, ordemTabelaEntityMapper);
+    IOrdemTabelaRepository tabelaRepository(IOrdemTabelaRepositoryJpa repository, ILinhaTabelaRepositoryJpa itemEspecialidadeRepository,
+                                            ICabecalhoTabelaRepositoryJpa itemCirurgiaoRepository, ITextoCabecalhoTabelaRepositoryJpa textoICabecalhoTabelaRepository,
+                                            OrdemTabelaEntityMapper ordemTabelaEntityMapper) {
+        return new OrdemTabelaRepository(repository, itemEspecialidadeRepository, itemCirurgiaoRepository, textoICabecalhoTabelaRepository, ordemTabelaEntityMapper);
     }
 
     @Bean
@@ -37,13 +41,13 @@ public class OrdemTabelaConfig {
     }
 
     @Bean
-    ItemTabelaCirurgiaoEntityMapper itemTabelaCirurgiaoEntityMapper() {
-        return new ItemTabelaCirurgiaoEntityMapper();
+    CabecalhoTabelaEntityMapper itemTabelaCirurgiaoEntityMapper() {
+        return new CabecalhoTabelaEntityMapper();
     }
 
     @Bean
-    ItemTabelaEspecialidadeEntityMapper itemTabelaEspecialidadeEntityMapper() {
-        return new ItemTabelaEspecialidadeEntityMapper();
+    LinhaTabelaEntityMapper itemTabelaEspecialidadeEntityMapper() {
+        return new LinhaTabelaEntityMapper();
     }
 
 }

@@ -3,7 +3,7 @@ package boletimdasaude.config;
 import boletimdasaude.application.gateways.especialidade.IEspecialidadeRepository;
 import boletimdasaude.application.usecases.especialidade.EspecialidadeInteractor;
 import boletimdasaude.infra.controller.especialidade.EspecialidadeMapper;
-import boletimdasaude.infra.controller.tabela.mappers.EditarTabelaMapper;
+import boletimdasaude.infra.controller.ordemtabela.mappers.EditarOrdemTabelaMapper;
 import boletimdasaude.infra.gateways.especialidade.EspecialidadeRepository;
 import boletimdasaude.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
@@ -45,9 +45,5 @@ public class EspecialidadeConfig {
         return new EspecialidadeMapper();
     }
 
-    @Bean
-    EditarTabelaMapper editarTabelaMapper() {
-        return new EditarTabelaMapper();
-    }
 
 }
