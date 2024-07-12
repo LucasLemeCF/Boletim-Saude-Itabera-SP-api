@@ -4,7 +4,6 @@ import boletimdasaude.domain.ordemtabela.LinhaTabela;
 import boletimdasaude.infra.persitence.ordemtabela.entities.LinhaTabelaEntity;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class LinhaTabelaEntityMapper {
 
@@ -20,8 +19,7 @@ public class LinhaTabelaEntityMapper {
     public static List<LinhaTabelaEntity> toEntityList(List<LinhaTabela> domainList) {
         return domainList.stream()
                 .map(LinhaTabelaEntityMapper::toEntity)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
     public static LinhaTabela toDomain(LinhaTabelaEntity domain) {
@@ -36,8 +34,7 @@ public class LinhaTabelaEntityMapper {
     public static List<LinhaTabela> toDomainList(List<LinhaTabelaEntity> domainList) {
         return domainList.stream()
                 .map(LinhaTabelaEntityMapper::toDomain)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
 }

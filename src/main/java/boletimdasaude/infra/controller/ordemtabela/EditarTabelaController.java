@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tabela")
 public class EditarTabelaController {
@@ -24,6 +26,11 @@ public class EditarTabelaController {
     ) {
         OrdemTabela ordemTabela = editarTabelaInteractor.editarOrdemTabela(EditarOrdemTabelaMapper.toDomain(request));
         return ResponseEntity.ok().body(ordemTabela);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrdemTabela>> buscarOrdemTabela() {
+        return ResponseEntity.ok().body(editarTabelaInteractor.buscarOrdemTabela());
     }
 
 }

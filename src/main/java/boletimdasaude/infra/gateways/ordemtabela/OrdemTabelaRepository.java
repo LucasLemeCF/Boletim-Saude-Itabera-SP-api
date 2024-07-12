@@ -56,9 +56,7 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
     private void salvarLinhaTabela(OrdemTabelaEntity entity) {
         List<LinhaTabelaEntity> listaItemTabelaEspecialidadeEntity = entity.getLinhasTabelaEntity();
 
-        listaItemTabelaEspecialidadeEntity.forEach(item -> {
-            item.setOrdemTabela(entity);
-        });
+        listaItemTabelaEspecialidadeEntity.forEach(item -> item.setOrdemTabela(entity));
 
         linhaTabelaRepository.saveAllAndFlush(listaItemTabelaEspecialidadeEntity);
     }
@@ -77,11 +75,15 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
     private void salvarTextoCabecalhoTabela(CabecalhoTabelaEntity entity) {
         List<TextoCabecalhoTabelaEntity> listaTextoCabecalhoTabelaEntity = entity.getTextos();
 
-        listaTextoCabecalhoTabelaEntity.forEach(texto -> {
-            texto.setCabecalhoOrdemTabela(entity);
-        });
+        listaTextoCabecalhoTabelaEntity.forEach(texto -> texto.setCabecalhoOrdemTabela(entity));
 
         textoCabecalhoTabelaRepository.saveAllAndFlush(entity.getTextos());
+    }
+
+    @Override
+    public List<OrdemTabela> buscarOrdemTabela() {
+        List<OrdemTabelaEntity> ordemTabelaEntities = repository.findAll();
+        return OrdemTabelaEntityMapper.toDomainList(ordemTabelaEntities);
     }
 
 }
