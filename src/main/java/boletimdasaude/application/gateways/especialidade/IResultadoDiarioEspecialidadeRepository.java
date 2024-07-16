@@ -1,0 +1,10 @@
+package boletimdasaude.application.gateways.especialidade;
+
+import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
+import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
+
+public interface IResultadoDiarioEspecialidadeRepository {
+
+    ResultadoDiarioEspecialidade salvarResultadoDiario(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, ResultadoMensalEspecialidade resultadoMensalEspecialidade);
+
+}

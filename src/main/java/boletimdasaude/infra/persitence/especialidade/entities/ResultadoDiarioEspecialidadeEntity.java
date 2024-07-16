@@ -21,10 +21,13 @@ public class ResultadoDiarioEspecialidadeEntity {
     @JoinColumn(name="ID_RESULTADO_MENSAL", nullable = true)
     private ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidade;
 
-    public ResultadoDiarioEspecialidadeEntity(Date data, int atendimentos) {
+    public ResultadoDiarioEspecialidadeEntity(Date data, int atendimentos, String medico) {
         this.data = data;
         this.atendimentos = atendimentos;
+        this.medico = medico;
     }
+
+    public ResultadoDiarioEspecialidadeEntity() {}
 
     public Long getId() { return id; }
 

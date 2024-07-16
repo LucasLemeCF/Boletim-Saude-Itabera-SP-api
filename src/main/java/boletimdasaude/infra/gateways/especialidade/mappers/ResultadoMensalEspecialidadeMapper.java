@@ -4,12 +4,12 @@ import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ResultadoMensalEspecialidadeMapper {
 
     public static ResultadoMensalEspecialidadeEntity toEntity(ResultadoMensalEspecialidade domain) {
         return new ResultadoMensalEspecialidadeEntity(
+                domain.mes(),
                 domain.ano(),
                 domain.atendimentos(),
                 domain.metaDiaria(),
@@ -21,13 +21,13 @@ public class ResultadoMensalEspecialidadeMapper {
     public static List<ResultadoMensalEspecialidadeEntity> toEntityList(List<ResultadoMensalEspecialidade> domainList) {
         return domainList.stream()
                 .map(ResultadoMensalEspecialidadeMapper::toEntity)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
     public static ResultadoMensalEspecialidade toDomain(ResultadoMensalEspecialidadeEntity entity) {
         return new ResultadoMensalEspecialidade(
                 entity.getId(),
+                entity.getMes(),
                 entity.getAno(),
                 entity.getAtendimentos(),
                 entity.getMetaDiaria(),
@@ -39,8 +39,7 @@ public class ResultadoMensalEspecialidadeMapper {
     public static List<ResultadoMensalEspecialidade> toDomainList(List<ResultadoMensalEspecialidadeEntity> entityList) {
         return entityList.stream()
                 .map(ResultadoMensalEspecialidadeMapper::toDomain)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
 }

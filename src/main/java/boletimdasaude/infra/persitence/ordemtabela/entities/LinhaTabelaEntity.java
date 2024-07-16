@@ -16,6 +16,7 @@ public class LinhaTabelaEntity {
     private Long posicao;
 
     @Column(name = "TIPO_LINHA")
+    @Enumerated(EnumType.STRING)
     private TipoLinha tipo;
 
     @Column(name = "COMPONENTE_ID")

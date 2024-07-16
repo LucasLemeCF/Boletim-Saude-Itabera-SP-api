@@ -1,6 +1,7 @@
 package boletimdasaude.infra.gateways.especialidade;
 
 import boletimdasaude.application.gateways.especialidade.IEspecialidadeRepository;
+import boletimdasaude.application.gateways.tabela.ITabelaEspecialidadeRepository;
 import boletimdasaude.domain.especialidade.Especialidade;
 import boletimdasaude.config.exceptions.NotFoundException;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
@@ -8,9 +9,11 @@ import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa
 import boletimdasaude.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
 import boletimdasaude.infra.persitence.especialidade.entities.EspecialidadeEntity;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
-public class EspecialidadeRepository implements IEspecialidadeRepository {
+public class EspecialidadeRepository implements IEspecialidadeRepository, ITabelaEspecialidadeRepository {
 
     private final IEspecialidadeRepositoryJpa repository;
     private final EspecialidadeEntityMapper especialidadeEntityMapper;
@@ -33,6 +36,11 @@ public class EspecialidadeRepository implements IEspecialidadeRepository {
     }
 
     @Override
+    public Optional<Especialidade> buscarEspecialidade(Long especialidadeId) {
+        return EspecialidadeEntityMapper.toDomainOptional(repository.findById(especialidadeId));
+    }
+
+    @Override
     public Especialidade editarEspecialidade(Long id, Especialidade especialidade) {
         EspecialidadeEntity oldEntity = repository.findById(id)
                 .stream()
@@ -49,7 +57,7 @@ public class EspecialidadeRepository implements IEspecialidadeRepository {
                 resultadoMensalEspecialidadeMapper.toEntityList(especialidade.resultadosMensais())
         );
 
-        return EspecialidadeEntityMapper.toDomain(repository.save(newEntity));
+        return EspecialidadeEntityMapper.toDomain(repository.saveAndFlush(newEntity));
     }
 
     @Override

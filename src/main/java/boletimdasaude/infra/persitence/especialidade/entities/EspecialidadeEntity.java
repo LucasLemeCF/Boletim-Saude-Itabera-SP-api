@@ -19,7 +19,7 @@ public class EspecialidadeEntity {
     private int metaDiariaAtual;
     @Column(name = "DES_META_MENSAL_ATUAL")
     private int metaMensalAtual;
-    @OneToMany(mappedBy = "especialidade")
+    @OneToMany(mappedBy = "especialidade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResultadoMensalEspecialidadeEntity> resultadosMensais;
 
     public EspecialidadeEntity(String especialidade, String medicoAtual, int metaDiariaAtual, int metaMensalAtual, List<ResultadoMensalEspecialidadeEntity> resultadosMensais) {

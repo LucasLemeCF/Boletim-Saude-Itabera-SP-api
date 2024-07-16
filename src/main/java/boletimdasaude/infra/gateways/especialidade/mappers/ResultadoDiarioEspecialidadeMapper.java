@@ -11,15 +11,15 @@ public class ResultadoDiarioEspecialidadeMapper {
     public static ResultadoDiarioEspecialidadeEntity toEntity(ResultadoDiarioEspecialidade domain) {
         return new ResultadoDiarioEspecialidadeEntity(
                 domain.data(),
-                domain.atendimentos()
+                domain.atendimentos(),
+                domain.medico()
         );
     }
 
     public static List<ResultadoDiarioEspecialidadeEntity> toEntityList(List<ResultadoDiarioEspecialidade> domainList) {
         return domainList.stream()
                 .map(ResultadoDiarioEspecialidadeMapper::toEntity)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
     public static ResultadoDiarioEspecialidade toDomain(ResultadoDiarioEspecialidadeEntity entity) {

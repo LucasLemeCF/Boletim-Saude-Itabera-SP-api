@@ -18,6 +18,7 @@ public class CabecalhoTabelaEntity {
     private Long posicao;
 
     @Column(name = "TIPO_LINHA")
+    @Enumerated(EnumType.STRING)
     private TipoLinha tipo;
 
     @OneToMany(mappedBy = "cabecalhoOrdemTabela", cascade = CascadeType.ALL, orphanRemoval = true)
