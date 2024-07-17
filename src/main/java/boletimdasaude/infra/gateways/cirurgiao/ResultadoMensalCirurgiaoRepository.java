@@ -59,9 +59,20 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         resultadoDiarioCirurgiaoEntity.setResultadoMensalCirurgiao(resultadoMensalCirurgiaoEntity);
 
         resultadoMensalCirurgiaoEntity.getResultadosDiarios().add(resultadoDiarioCirurgiaoEntity);
+        resultadoMensalCirurgiaoEntity.setAtendimentos(somarAtendimentos(resultadoMensalCirurgiaoEntity));
         ResultadoMensalCirurgiaoEntity resultado = resultadoMensalCirurgiaoRepositoryJpa.save(resultadoMensalCirurgiaoEntity);
 
         return ResultadoMensalCirurgiaoMapper.toDomain(resultado);
+    }
+
+    private int somarAtendimentos(ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity) {
+        int atendimentos = 0;
+
+        for (ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity : resultadoMensalCirurgiaoEntity.getResultadosDiarios()) {
+            atendimentos += resultadoDiarioCirurgiaoEntity.getAtendimentos();
+        }
+
+        return atendimentos;
     }
 
     private ResultadoDiarioCirurgiaoEntity buscarDiaCirurgiao(Date data, Long resultadoMensalId) {
@@ -150,7 +161,13 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity = buscarDiaCirurgiao(data, linhaTabelaRequest.componenteId());
         resultadoDiarioCirurgiaoEntity.setAtendimentos(linhaTabelaRequest.pacientesAtendidos());
 
-        return ResultadoDiarioCirurgiaoMapper.toDomain(resultadoDiarioCirurgiaoRepositoryJpa.save(resultadoDiarioCirurgiaoEntity));
+        resultadoDiarioCirurgiaoEntity = resultadoDiarioCirurgiaoRepositoryJpa.save(resultadoDiarioCirurgiaoEntity);
+
+        ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity = resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao();
+        resultadoMensalCirurgiaoEntity.setAtendimentos(somarAtendimentos(resultadoMensalCirurgiaoEntity));
+        resultadoMensalCirurgiaoRepositoryJpa.save(resultadoMensalCirurgiaoEntity);
+
+        return ResultadoDiarioCirurgiaoMapper.toDomain(resultadoDiarioCirurgiaoEntity);
     }
 
 }

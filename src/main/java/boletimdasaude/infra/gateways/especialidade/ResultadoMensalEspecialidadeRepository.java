@@ -8,6 +8,7 @@ import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoDiarioEspecialidadeMapper;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
+import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoMensalCirurgiaoEntity;
 import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.IResultadoMensalEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.entities.EspecialidadeEntity;
@@ -59,9 +60,20 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         resultadoDiarioEspecialidadeEntity.setResultadoMensal(resultadoMensalEspecialidadeEntity);
 
         resultadoMensalEspecialidadeEntity.getResultadosDiarios().add(resultadoDiarioEspecialidadeEntity);
+        resultadoMensalEspecialidadeEntity.setAtendimentos(somarAtendimentos(resultadoMensalEspecialidadeEntity));
         ResultadoMensalEspecialidadeEntity resultado = resultadoMensalEspecialidadeRepositoryJpa.save(resultadoMensalEspecialidadeEntity);
 
         return ResultadoMensalEspecialidadeMapper.toDomain(resultado);
+    }
+
+    private int somarAtendimentos(ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity) {
+        int atendimentos = 0;
+
+        for (ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity : resultadoMensalEspecialidadeEntity.getResultadosDiarios()) {
+            atendimentos += resultadoDiarioEspecialidadeEntity.getAtendimentos();
+        }
+
+        return atendimentos;
     }
 
     private ResultadoDiarioEspecialidadeEntity buscarDiaEspecialidade(Date data, Long resultadoMensalId) {
@@ -150,7 +162,13 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = buscarDiaEspecialidade(data, linhaTabelaRequest.componenteId());
         resultadoDiarioEspecialidadeEntity.setAtendimentos(linhaTabelaRequest.pacientesAtendidos());
 
-        return ResultadoDiarioEspecialidadeMapper.toDomain(resultadoDiarioEspecialidadeRepositoryJpa.save(resultadoDiarioEspecialidadeEntity));
+        resultadoDiarioEspecialidadeEntity = resultadoDiarioEspecialidadeRepositoryJpa.save(resultadoDiarioEspecialidadeEntity);
+
+        ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = resultadoDiarioEspecialidadeEntity.getResultadoMensal();
+        resultadoMensalEspecialidadeEntity.setAtendimentos(somarAtendimentos(resultadoMensalEspecialidadeEntity));
+        resultadoMensalEspecialidadeRepositoryJpa.save(resultadoMensalEspecialidadeEntity);
+
+        return ResultadoDiarioEspecialidadeMapper.toDomain(resultadoDiarioEspecialidadeEntity);
     }
 
 }
