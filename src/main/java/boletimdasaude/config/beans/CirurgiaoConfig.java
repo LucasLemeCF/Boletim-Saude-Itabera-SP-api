@@ -9,6 +9,7 @@ import boletimdasaude.infra.gateways.cirurgiao.mappers.CirurgiaoEntityMapper;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
 import boletimdasaude.infra.persitence.cirurgiao.ICirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
+import boletimdasaude.infra.persitence.cirurgiao.IResultadoDiarioCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.IResultadoMensalCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.entities.CirurgiaoEntity;
 import org.springframework.context.annotation.Bean;
@@ -44,8 +45,9 @@ public class CirurgiaoConfig {
 
     @Bean
     IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa,
-                                                                           IResultadoMensalCirurgiaoRepositoryJpa resultadoMensalCirurgiaoRepositoryJpa) {
-        return new ResultadoMensalCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, resultadoMensalCirurgiaoRepositoryJpa);
+                                                                           IResultadoMensalCirurgiaoRepositoryJpa resultadoMensalCirurgiaoRepositoryJpa,
+                                                                           IResultadoDiarioCirurgiaoRepositoryJpa resultadoDiarioCirurgiaoRepositoryJpa) {
+        return new ResultadoMensalCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, resultadoMensalCirurgiaoRepositoryJpa, resultadoDiarioCirurgiaoRepositoryJpa);
     }
 
 }

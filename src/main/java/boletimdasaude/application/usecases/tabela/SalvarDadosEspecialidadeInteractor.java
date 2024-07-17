@@ -72,14 +72,16 @@ public class SalvarDadosEspecialidadeInteractor {
         if (especialidadeOptional.isPresent()) {
             if (!existeDadosParaOMes(dadosEspecialidade.componenteId())) {
                 criarDadosIniciaisDoMes(dadosEspecialidade, especialidadeOptional.get());
-            } else {
+            } if (!existeDadosParaODia(dadosEspecialidade.componenteId())) {
                 adicionarDadosDoDia(dadosEspecialidade, especialidadeOptional.get().medicoAtual());
+            } else {
+                atualizarDadosDoDia(dadosEspecialidade);
             }
         }
     }
 
     private boolean existeDadosParaOMes(Long especialidadeId) {
-       return resultadoMensalEspecialidadeRepository.buscarMesAnoEspecialidade(this.tabelaRequest.data(), especialidadeId) != null;
+       return resultadoMensalEspecialidadeRepository.existeMesAnoEspecialidade(this.tabelaRequest.data(), especialidadeId);
     }
 
     private List<ResultadoDiarioEspecialidade> adicionaDadosPrimeiroDiaDoMes(LinhaTabelaRequest dadosEspecialidade, String nomeMedicoAtual) {
@@ -109,6 +111,10 @@ public class SalvarDadosEspecialidadeInteractor {
         resultadoMensalEspecialidadeRepository.salvarDadosIniciaisDoMes(resultadoMensal, especialidade.id());
     }
 
+    private boolean existeDadosParaODia(Long especialidadeId) {
+        return resultadoMensalEspecialidadeRepository.existeDiaEspecialidade(this.tabelaRequest.data(), especialidadeId);
+    }
+
     private void adicionarDadosDoDia(LinhaTabelaRequest dadosEspecialidade, String medicoAtual) {
         ResultadoDiarioEspecialidade  resultadoDiario = new ResultadoDiarioEspecialidade(
                 null,
@@ -118,6 +124,13 @@ public class SalvarDadosEspecialidadeInteractor {
         );
 
         resultadoMensalEspecialidadeRepository.salvarDadosDoDia(resultadoDiario, dadosEspecialidade.componenteId());
+    }
+
+    private void atualizarDadosDoDia(LinhaTabelaRequest dadosEspecialidade) {
+        resultadoMensalEspecialidadeRepository.atualizarDadosDoDia(
+                this.tabelaRequest.data(),
+                dadosEspecialidade
+        );
     }
 
 }

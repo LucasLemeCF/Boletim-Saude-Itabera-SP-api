@@ -1,8 +1,8 @@
 package boletimdasaude.application.gateways.especialidade;
 
+import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
-import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
 import java.util.Date;
 
@@ -12,6 +12,10 @@ public interface IResultadoMensalEspecialidadeRepository {
 
     ResultadoMensalEspecialidade salvarDadosDoDia(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, Long especialidadeId);
 
-    ResultadoMensalEspecialidadeEntity buscarMesAnoEspecialidade(Date data, Long especialidadeId);
+    boolean existeMesAnoEspecialidade(Date data, Long especialidadeId);
+
+    boolean existeDiaEspecialidade(Date data, Long resultadoMensalId);
+
+    ResultadoDiarioEspecialidade atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest);
 
 }

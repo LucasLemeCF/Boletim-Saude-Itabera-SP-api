@@ -1,8 +1,8 @@
 package boletimdasaude.application.gateways.cirurgiao;
 
+import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
 import boletimdasaude.domain.cirurgiao.ResultadoDiarioCirurgiao;
 import boletimdasaude.domain.cirurgiao.ResultadoMensalCirurgiao;
-import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoMensalCirurgiaoEntity;
 
 import java.util.Date;
 
@@ -12,6 +12,10 @@ public interface IResultadoMensalCirurgiaoRepository {
 
     ResultadoMensalCirurgiao salvarDadosDoDia(ResultadoDiarioCirurgiao resultadoDiarioCirurgiao, Long cirurgiaoId);
 
-    ResultadoMensalCirurgiaoEntity buscarMesAnoProcedimentoCirurgiao(Date data, Long cirurgiaoId);
+    boolean existeMesProcedimentoCirurgiao(Date data, Long cirurgiaoId);
+
+    boolean existeDiaCirurgiao(Date data, Long resultadoMensalId);
+
+    ResultadoDiarioCirurgiao atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest);
 
 }

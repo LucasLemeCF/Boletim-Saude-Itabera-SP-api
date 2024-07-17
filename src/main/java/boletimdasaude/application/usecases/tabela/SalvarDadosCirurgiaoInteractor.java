@@ -72,14 +72,16 @@ public class SalvarDadosCirurgiaoInteractor {
         if (procedimentoCirurgiaoOptional.isPresent()) {
             if (!existeDadosParaOMes(dadosProcedimento.componenteId())) {
                 criarDadosIniciaisDoMes(dadosProcedimento, procedimentoCirurgiaoOptional.get().id());
-            } else {
+            } if (!existeDadosParaODia(dadosProcedimento.componenteId())) {
                 adicionarDadosDoDia(dadosProcedimento);
+            } else {
+                atualizarDadosDoDia(dadosProcedimento);
             }
         }
     }
 
     private boolean existeDadosParaOMes(Long procedimentoId) {
-        return  resultadoMensalCirurgiaoRepository.buscarMesAnoProcedimentoCirurgiao(this.tabelaRequest.data(), procedimentoId) != null;
+        return resultadoMensalCirurgiaoRepository.existeMesProcedimentoCirurgiao(this.tabelaRequest.data(), procedimentoId);
     }
 
     private List<ResultadoDiarioCirurgiao> adicionaDadosPrimeiroDiaDoMes(LinhaTabelaRequest dadosCirurgiao) {
@@ -106,6 +108,10 @@ public class SalvarDadosCirurgiaoInteractor {
         resultadoMensalCirurgiaoRepository.salvarDadosIniciaisDoMes(resultadoMensal, procedimentoId);
     }
 
+    private boolean existeDadosParaODia(Long especialidadeId) {
+        return resultadoMensalCirurgiaoRepository.existeDiaCirurgiao(this.tabelaRequest.data(), especialidadeId);
+    }
+
     private void adicionarDadosDoDia(LinhaTabelaRequest dadosCirurgiao) {
         ResultadoDiarioCirurgiao  resultadoDiario = new ResultadoDiarioCirurgiao(
                 null,
@@ -114,6 +120,13 @@ public class SalvarDadosCirurgiaoInteractor {
         );
 
         resultadoMensalCirurgiaoRepository.salvarDadosDoDia(resultadoDiario, dadosCirurgiao.componenteId());
+    }
+
+    private void atualizarDadosDoDia(LinhaTabelaRequest dadosCirurgiao) {
+        resultadoMensalCirurgiaoRepository.atualizarDadosDoDia(
+                this.tabelaRequest.data(),
+                dadosCirurgiao
+        );
     }
 
 }
