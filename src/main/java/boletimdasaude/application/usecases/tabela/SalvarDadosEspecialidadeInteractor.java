@@ -73,7 +73,7 @@ public class SalvarDadosEspecialidadeInteractor {
             if (!existeDadosParaOMes(dadosEspecialidade.componenteId())) {
                 criarDadosIniciaisDoMes(dadosEspecialidade, especialidadeOptional.get());
             } else {
-                adicionarDadosDoDia(dadosEspecialidade, especialidadeOptional.get());
+                adicionarDadosDoDia(dadosEspecialidade, especialidadeOptional.get().medicoAtual());
             }
         }
     }
@@ -109,12 +109,12 @@ public class SalvarDadosEspecialidadeInteractor {
         resultadoMensalEspecialidadeRepository.salvarDadosIniciaisDoMes(resultadoMensal, especialidade.id());
     }
 
-    private void adicionarDadosDoDia(LinhaTabelaRequest dadosEspecialidade, Especialidade especialidade) {
+    private void adicionarDadosDoDia(LinhaTabelaRequest dadosEspecialidade, String medicoAtual) {
         ResultadoDiarioEspecialidade  resultadoDiario = new ResultadoDiarioEspecialidade(
                 null,
                 this.tabelaRequest.data(),
                 dadosEspecialidade.pacientesAtendidos(),
-                especialidade.medicoAtual()
+                medicoAtual
         );
 
         resultadoMensalEspecialidadeRepository.salvarDadosDoDia(resultadoDiario, dadosEspecialidade.componenteId());

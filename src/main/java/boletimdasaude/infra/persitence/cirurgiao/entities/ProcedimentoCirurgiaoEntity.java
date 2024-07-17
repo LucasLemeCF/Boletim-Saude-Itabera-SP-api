@@ -13,7 +13,7 @@ public class ProcedimentoCirurgiaoEntity {
     private Long id;
     @Column(name = "DES_NOME")
     private String nome;
-    @OneToMany(mappedBy = "procedimento")
+    @OneToMany(mappedBy = "procedimento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResultadoMensalCirurgiaoEntity> resultadosMensais;
     @ManyToOne
     @JoinColumn(name="ID_CIRURGIAO", nullable = true)
@@ -23,6 +23,8 @@ public class ProcedimentoCirurgiaoEntity {
         this.nome = nome;
         this.resultadosMensais = resultadosMensais;
     }
+
+    public ProcedimentoCirurgiaoEntity() {}
 
     public Long getId() {
         return id;

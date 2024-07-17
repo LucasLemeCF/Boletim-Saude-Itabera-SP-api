@@ -34,14 +34,14 @@ public class EspecialidadeEntityMapper {
                 .toList();
     }
 
-    public static Optional<Especialidade> toDomainOptional(Optional<EspecialidadeEntity> entityOptional) {
-        return entityOptional.map(entity -> new Especialidade(
-                entity.getId(),
-                entity.getEspecialidade(),
-                entity.getMedicoAtual(),
-                entity.getMetaDiariaAtual(),
-                entity.getMetaMensalAtual(),
-                ResultadoMensalEspecialidadeMapper.toDomainList(entity.getResultadosMensais())
+    public static Optional<Especialidade> toDomainOptional(EspecialidadeEntity entityOptional) {
+        return Optional.of(new Especialidade(
+                entityOptional.getId(),
+                entityOptional.getEspecialidade(),
+                entityOptional.getMedicoAtual(),
+                entityOptional.getMetaDiariaAtual(),
+                entityOptional.getMetaMensalAtual(),
+                ResultadoMensalEspecialidadeMapper.toDomainList(entityOptional.getResultadosMensais())
         ));
     }
 

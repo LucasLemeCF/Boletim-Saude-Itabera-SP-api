@@ -1,11 +1,15 @@
 package boletimdasaude.config.beans;
 
 import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
+import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRepository;
 import boletimdasaude.application.usecases.cirurgiao.CirurgiaoInteractor;
 import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
+import boletimdasaude.infra.gateways.cirurgiao.ResultadoMensalCirurgiaoRepository;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.CirurgiaoEntityMapper;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
 import boletimdasaude.infra.persitence.cirurgiao.ICirurgiaoRepositoryJpa;
+import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
+import boletimdasaude.infra.persitence.cirurgiao.IResultadoMensalCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.entities.CirurgiaoEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +28,8 @@ public class CirurgiaoConfig {
     }
 
     @Bean
-    ICirurgiaoRepository cirurgiaoRepository(ICirurgiaoRepositoryJpa cirurgiaoRepository, CirurgiaoEntityMapper cirurgiaoEntityMapper, ResultadoMensalCirurgiaoMapper resultadoMensalCirurgiaoMapper) {
-        return new CirurgiaoRepository(cirurgiaoRepository, cirurgiaoEntityMapper, resultadoMensalCirurgiaoMapper);
+    ICirurgiaoRepository cirurgiaoRepository(ICirurgiaoRepositoryJpa cirurgiaoRepository, CirurgiaoEntityMapper cirurgiaoEntityMapper ) {
+        return new CirurgiaoRepository(cirurgiaoRepository, cirurgiaoEntityMapper);
     }
 
     @Bean
@@ -36,6 +40,12 @@ public class CirurgiaoConfig {
     @Bean
     ResultadoMensalCirurgiaoMapper resultadoMensalCirurgiaoMapper() {
         return new ResultadoMensalCirurgiaoMapper();
+    }
+
+    @Bean
+    IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa,
+                                                                           IResultadoMensalCirurgiaoRepositoryJpa resultadoMensalCirurgiaoRepositoryJpa) {
+        return new ResultadoMensalCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, resultadoMensalCirurgiaoRepositoryJpa);
     }
 
 }

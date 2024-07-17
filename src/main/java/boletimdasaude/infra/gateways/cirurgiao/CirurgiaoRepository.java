@@ -15,12 +15,10 @@ public class CirurgiaoRepository implements ICirurgiaoRepository {
 
     private final ICirurgiaoRepositoryJpa cirurgiaoRepository;
     private final CirurgiaoEntityMapper cirurgiaoEntityMapper;
-    private final ResultadoMensalCirurgiaoMapper resultadoMensalCirurgiaoMapper;
 
-    public CirurgiaoRepository(ICirurgiaoRepositoryJpa cirurgiaoRepository, CirurgiaoEntityMapper cirurgiaoEntityMapper, ResultadoMensalCirurgiaoMapper resultadoMensalCirurgiaoMapper) {
+    public CirurgiaoRepository(ICirurgiaoRepositoryJpa cirurgiaoRepository, CirurgiaoEntityMapper cirurgiaoEntityMapper) {
         this.cirurgiaoRepository = cirurgiaoRepository;
         this.cirurgiaoEntityMapper = cirurgiaoEntityMapper;
-        this.resultadoMensalCirurgiaoMapper = resultadoMensalCirurgiaoMapper;
     }
 
     @Override

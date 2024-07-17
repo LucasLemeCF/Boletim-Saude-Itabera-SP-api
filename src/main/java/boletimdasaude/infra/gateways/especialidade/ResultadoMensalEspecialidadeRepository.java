@@ -56,7 +56,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
 
     @Override
     public ResultadoMensalEspecialidadeEntity buscarMesAnoEspecialidade(Date data, Long especialidadeId) {
-        ResultadoMensalEspecialidadeEntity resultado = new ResultadoMensalEspecialidadeEntity();
+        ResultadoMensalEspecialidadeEntity resultado = null;
 
         Optional<EspecialidadeEntity> especialidadeEntity = especialidadeRepositoryJpa.findById(especialidadeId);
 

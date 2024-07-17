@@ -13,7 +13,7 @@ public class CirurgiaoEntity {
     private Long id;
     @Column(name = "DES_NOME")
     private String nome;
-    @OneToMany(mappedBy = "cirurgiao")
+    @OneToMany(mappedBy = "cirurgiao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProcedimentoCirurgiaoEntity> procedimentos;
 
     public CirurgiaoEntity(String nome, List<ProcedimentoCirurgiaoEntity> procedimentos) {

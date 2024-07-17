@@ -37,7 +37,7 @@ public class EspecialidadeRepository implements IEspecialidadeRepository, ITabel
 
     @Override
     public Optional<Especialidade> buscarEspecialidade(Long especialidadeId) {
-        return EspecialidadeEntityMapper.toDomainOptional(repository.findById(especialidadeId));
+        return EspecialidadeEntityMapper.toDomainOptional(repository.findById(especialidadeId).get());
     }
 
     @Override

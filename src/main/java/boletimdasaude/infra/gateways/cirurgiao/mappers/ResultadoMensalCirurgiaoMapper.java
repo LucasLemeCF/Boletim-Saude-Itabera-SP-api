@@ -37,8 +37,7 @@ public class ResultadoMensalCirurgiaoMapper {
     public static List<ResultadoMensalCirurgiao> toDomainList(List<ResultadoMensalCirurgiaoEntity> entityList) {
         return entityList.stream()
                 .map(ResultadoMensalCirurgiaoMapper::toDomain)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
 }

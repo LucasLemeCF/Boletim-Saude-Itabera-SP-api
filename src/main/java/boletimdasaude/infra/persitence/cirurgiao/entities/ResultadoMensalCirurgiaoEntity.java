@@ -12,23 +12,25 @@ public class ResultadoMensalCirurgiaoEntity {
     @Column(name = "ID_RESULTADO_MENSAL_CIRURGIAO")
     private Long id;
     @Column(name = "DES_MES")
-    private String mes;
+    private int mes;
     @Column(name = "DES_ANO")
     private int ano;
     @Column(name = "DES_ATENDIMENTOS")
     private int atendimentos;
-    @OneToMany(mappedBy = "resultadoMensalCirurgiao")
+    @OneToMany(mappedBy = "resultadoMensalCirurgiao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResultadoDiarioCirurgiaoEntity> resultadosDiarios;
     @ManyToOne
     @JoinColumn(name="ID_PROCEDIMENTO", nullable = true)
     private ProcedimentoCirurgiaoEntity procedimento;
 
-    public ResultadoMensalCirurgiaoEntity(String mes, int ano, int atendimentos, List<ResultadoDiarioCirurgiaoEntity> resultadosDiarios) {
+    public ResultadoMensalCirurgiaoEntity(int mes, int ano, int atendimentos, List<ResultadoDiarioCirurgiaoEntity> resultadosDiarios) {
         this.mes = mes;
         this.ano = ano;
         this.atendimentos = atendimentos;
         this.resultadosDiarios = resultadosDiarios;
     }
+
+    public ResultadoMensalCirurgiaoEntity() {}
 
     public Long getId() {
         return id;
@@ -38,11 +40,11 @@ public class ResultadoMensalCirurgiaoEntity {
         this.id = id;
     }
 
-    public String getMes() {
+    public int getMes() {
         return mes;
     }
 
-    public void setMes(String mes) {
+    public void setMes(int mes) {
         this.mes = mes;
     }
 
@@ -70,4 +72,11 @@ public class ResultadoMensalCirurgiaoEntity {
         this.resultadosDiarios = resultadosDiarios;
     }
 
+    public ProcedimentoCirurgiaoEntity getProcedimento() {
+        return procedimento;
+    }
+
+    public void setProcedimento(ProcedimentoCirurgiaoEntity procedimento) {
+        this.procedimento = procedimento;
+    }
 }

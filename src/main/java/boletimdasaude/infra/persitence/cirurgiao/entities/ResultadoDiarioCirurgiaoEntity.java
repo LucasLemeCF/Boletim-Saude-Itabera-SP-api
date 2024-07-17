@@ -24,6 +24,8 @@ public class ResultadoDiarioCirurgiaoEntity {
         this.atendimentos = atendimentos;
     }
 
+    public ResultadoDiarioCirurgiaoEntity() {}
+
     public Long getId() {
         return id;
     }
@@ -46,5 +48,13 @@ public class ResultadoDiarioCirurgiaoEntity {
 
     public void setAtendimentos(int atendimentos) {
         this.atendimentos = atendimentos;
+    }
+
+    public ResultadoMensalCirurgiaoEntity getResultadoMensalCirurgiao() {
+        return resultadoMensalCirurgiao;
+    }
+
+    public void setResultadoMensalCirurgiao(ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao) {
+        this.resultadoMensalCirurgiao = resultadoMensalCirurgiao;
     }
 }

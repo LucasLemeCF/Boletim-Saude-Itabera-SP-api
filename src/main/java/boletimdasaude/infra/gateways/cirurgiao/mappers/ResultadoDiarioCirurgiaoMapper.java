@@ -4,7 +4,6 @@ import boletimdasaude.domain.cirurgiao.ResultadoDiarioCirurgiao;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoDiarioCirurgiaoEntity;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ResultadoDiarioCirurgiaoMapper {
 
@@ -18,8 +17,7 @@ public class ResultadoDiarioCirurgiaoMapper {
     public static List<ResultadoDiarioCirurgiaoEntity> toEntityList(List<ResultadoDiarioCirurgiao> domainList) {
         return domainList.stream()
                 .map(ResultadoDiarioCirurgiaoMapper::toEntity)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
     public static ResultadoDiarioCirurgiao toDomain(ResultadoDiarioCirurgiaoEntity entity) {
@@ -33,8 +31,7 @@ public class ResultadoDiarioCirurgiaoMapper {
     public static List<ResultadoDiarioCirurgiao> toDomainList(List<ResultadoDiarioCirurgiaoEntity> entityList) {
         return entityList.stream()
                 .map(ResultadoDiarioCirurgiaoMapper::toDomain)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
 }
