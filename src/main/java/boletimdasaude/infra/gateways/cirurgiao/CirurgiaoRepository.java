@@ -4,8 +4,7 @@ import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
 import boletimdasaude.config.exceptions.NotFoundException;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.CirurgiaoEntityMapper;
-import boletimdasaude.infra.gateways.cirurgiao.mappers.ProcedimentoCirurgiaoMapper;
-import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
+import boletimdasaude.infra.gateways.procedimentocirurgiao.mappers.ProcedimentoCirurgiaoEntityMapper;
 import boletimdasaude.infra.persitence.cirurgiao.ICirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.entities.CirurgiaoEntity;
 
@@ -31,6 +30,12 @@ public class CirurgiaoRepository implements ICirurgiaoRepository {
         return cirurgiaoEntityMapper.toDomainList(cirurgiaoRepository.findAll());
     }
 
+    public CirurgiaoEntity buscarCirurgiaoPorId(Long id) {
+        return cirurgiaoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("ID %s não encontrado", id))
+        );
+    }
+
     @Override
     public Cirurgiao editarCirurgiao(Long id, Cirurgiao cirurgiao) {
         CirurgiaoEntity oldEntity = cirurgiaoRepository.findById(id)
@@ -42,7 +47,7 @@ public class CirurgiaoRepository implements ICirurgiaoRepository {
         CirurgiaoEntity newEntity = new CirurgiaoEntity(
                 id,
                 cirurgiao.nome() != null ? cirurgiao.nome() : oldEntity.getNome(),
-                ProcedimentoCirurgiaoMapper.toEntityList(cirurgiao.procedimentos())
+                ProcedimentoCirurgiaoEntityMapper.toEntityList(cirurgiao.procedimentos())
         );
 
         return CirurgiaoEntityMapper.toDomain(cirurgiaoRepository.save(newEntity));

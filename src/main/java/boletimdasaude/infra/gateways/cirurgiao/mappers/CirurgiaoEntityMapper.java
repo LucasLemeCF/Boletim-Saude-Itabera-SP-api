@@ -1,6 +1,7 @@
 package boletimdasaude.infra.gateways.cirurgiao.mappers;
 
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
+import boletimdasaude.infra.gateways.procedimentocirurgiao.mappers.ProcedimentoCirurgiaoEntityMapper;
 import boletimdasaude.infra.persitence.cirurgiao.entities.CirurgiaoEntity;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class CirurgiaoEntityMapper {
     public CirurgiaoEntity toEntity(Cirurgiao domain) {
         return new CirurgiaoEntity(
                 domain.nome(),
-                ProcedimentoCirurgiaoMapper.toEntityList(domain.procedimentos())
+                ProcedimentoCirurgiaoEntityMapper.toEntityList(domain.procedimentos())
         );
     }
 
@@ -19,7 +20,7 @@ public class CirurgiaoEntityMapper {
         return new Cirurgiao(
                 entity.getId(),
                 entity.getNome(),
-                ProcedimentoCirurgiaoMapper.toDomainList(entity.getProcedimentos())
+                ProcedimentoCirurgiaoEntityMapper.toDomainList(entity.getProcedimentos())
         );
     }
 

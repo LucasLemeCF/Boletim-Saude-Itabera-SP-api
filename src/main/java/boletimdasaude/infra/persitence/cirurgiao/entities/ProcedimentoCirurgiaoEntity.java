@@ -19,6 +19,12 @@ public class ProcedimentoCirurgiaoEntity {
     @JoinColumn(name="ID_CIRURGIAO", nullable = true)
     private CirurgiaoEntity cirurgiao;
 
+    public ProcedimentoCirurgiaoEntity(Long id, String nome, List<ResultadoMensalCirurgiaoEntity> resultadosMensais) {
+        this.id = id;
+        this.nome = nome;
+        this.resultadosMensais = resultadosMensais;
+    }
+
     public ProcedimentoCirurgiaoEntity(String nome, List<ResultadoMensalCirurgiaoEntity> resultadosMensais) {
         this.nome = nome;
         this.resultadosMensais = resultadosMensais;

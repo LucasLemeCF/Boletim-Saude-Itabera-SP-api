@@ -15,8 +15,6 @@ import boletimdasaude.infra.persitence.cirurgiao.IResultadoMensalCirurgiaoReposi
 import boletimdasaude.infra.persitence.cirurgiao.entities.ProcedimentoCirurgiaoEntity;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoDiarioCirurgiaoEntity;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoMensalCirurgiaoEntity;
-import boletimdasaude.infra.persitence.especialidade.entities.ResultadoDiarioEspecialidadeEntity;
-import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -7,7 +7,8 @@ import boletimdasaude.application.gateways.tabela.ITabelaEspecialidadeRepository
 import boletimdasaude.application.usecases.tabela.DadosCirurgiaoInteractor;
 import boletimdasaude.application.usecases.tabela.DadosEspecialidadeInteractor;
 import boletimdasaude.application.usecases.tabela.TabelaInteractor;
-import boletimdasaude.infra.gateways.cirurgiao.ProcedimentoCirurgiaoRepository;
+import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
+import boletimdasaude.infra.gateways.procedimentocirurgiao.ProcedimentoCirurgiaoRepository;
 import boletimdasaude.infra.gateways.especialidade.ResultadoMensalEspecialidadeRepository;
 import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
@@ -49,11 +50,6 @@ public class TabelaConfig {
     DadosCirurgiaoInteractor salvarDadosCirurgiaoInteractor(ITabelaCirurgiaoRepository tabelaCirurgiaoRepository,
                                                             IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository) {
         return new DadosCirurgiaoInteractor(tabelaCirurgiaoRepository, resultadoMensalCirurgiaoRepository);
-    }
-
-    @Bean
-    ITabelaCirurgiaoRepository tabelaCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa) {
-        return new ProcedimentoCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa);
     }
 
 }

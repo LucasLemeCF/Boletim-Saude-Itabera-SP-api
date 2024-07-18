@@ -1,12 +1,13 @@
-package boletimdasaude.infra.gateways.cirurgiao.mappers;
+package boletimdasaude.infra.gateways.procedimentocirurgiao.mappers;
 
 import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
+import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ProcedimentoCirurgiaoEntity;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ProcedimentoCirurgiaoMapper {
+public class ProcedimentoCirurgiaoEntityMapper {
 
     public static ProcedimentoCirurgiaoEntity toEntity(ProcedimentoCirurgiao domain) {
         return new ProcedimentoCirurgiaoEntity(
@@ -17,7 +18,7 @@ public class ProcedimentoCirurgiaoMapper {
 
     public static List<ProcedimentoCirurgiaoEntity> toEntityList(List<ProcedimentoCirurgiao> domainList) {
         return domainList.stream()
-                .map(ProcedimentoCirurgiaoMapper::toEntity)
+                .map(ProcedimentoCirurgiaoEntityMapper::toEntity)
                 .toList();
     }
 
@@ -31,7 +32,7 @@ public class ProcedimentoCirurgiaoMapper {
 
     public static List<ProcedimentoCirurgiao> toDomainList(List<ProcedimentoCirurgiaoEntity> entityList) {
         return entityList.stream()
-                .map(ProcedimentoCirurgiaoMapper::toDomain)
+                .map(ProcedimentoCirurgiaoEntityMapper::toDomain)
                 .toList();
     }
 
