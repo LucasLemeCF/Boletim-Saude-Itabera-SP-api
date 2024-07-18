@@ -4,7 +4,7 @@ import java.util.Date;
 
 public record ResultadoDiarioCirurgiao(
         Long id,
-        Date data,
+        int data,
         int atendimentos
 ) {
 }

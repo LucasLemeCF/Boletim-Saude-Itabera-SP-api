@@ -2,6 +2,7 @@ package boletimdasaude.infra.gateways.cirurgiao;
 
 import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
+import boletimdasaude.application.responses.tabela.TabelaCirurgioesResponse;
 import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.config.exceptions.NotFoundException;
 import boletimdasaude.domain.cirurgiao.ResultadoDiarioCirurgiao;
@@ -14,8 +15,12 @@ import boletimdasaude.infra.persitence.cirurgiao.IResultadoMensalCirurgiaoReposi
 import boletimdasaude.infra.persitence.cirurgiao.entities.ProcedimentoCirurgiaoEntity;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoDiarioCirurgiaoEntity;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoMensalCirurgiaoEntity;
+import boletimdasaude.infra.persitence.especialidade.entities.ResultadoDiarioEspecialidadeEntity;
+import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirurgiaoRepository {
@@ -53,8 +58,8 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
     }
 
     @Override
-    public ResultadoMensalCirurgiao salvarDadosDoDia(ResultadoDiarioCirurgiao resultadoDiarioCirurgiao, Long procedimentoId) {
-        ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity = buscarMesAnoProcedimentoCirurgiao(resultadoDiarioCirurgiao.data(), procedimentoId);
+    public ResultadoMensalCirurgiao salvarDadosDoDia(ResultadoDiarioCirurgiao resultadoDiarioCirurgiao, Long procedimentoId, Date data) {
+        ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity = buscarMesAnoProcedimentoCirurgiao(data, procedimentoId);
         ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity = ResultadoDiarioCirurgiaoMapper.toEntity(resultadoDiarioCirurgiao);
         resultadoDiarioCirurgiaoEntity.setResultadoMensalCirurgiao(resultadoMensalCirurgiaoEntity);
 
@@ -124,7 +129,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
     }
 
     private boolean mesmoDia(ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity) {
-        return ConverterData.toDia(resultadoDiarioCirurgiaoEntity.getData()) == dia;
+        return resultadoDiarioCirurgiaoEntity.getDia() == dia;
     }
 
     public ResultadoMensalCirurgiaoEntity buscarMesAnoProcedimentoCirurgiao(Date data, Long procedimentoId) {
@@ -168,6 +173,59 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         resultadoMensalCirurgiaoRepositoryJpa.save(resultadoMensalCirurgiaoEntity);
 
         return ResultadoDiarioCirurgiaoMapper.toDomain(resultadoDiarioCirurgiaoEntity);
+    }
+
+    @Override
+    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(Date data) {
+        List<TabelaCirurgioesResponse> tabelaCirurgioesResponses = new ArrayList<>();
+
+        instanciaVariaveis(data);
+
+        List<ResultadoMensalCirurgiaoEntity> listaResultadoMensal = resultadoMensalCirurgiaoRepositoryJpa.findByMesAndAno(mes, ano);
+        List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario = buscarResultadoDiarioCirurgiao(listaResultadoMensal);
+
+        montarTabelaCirurgioes(tabelaCirurgioesResponses, listaResultadoDiario);
+
+        return tabelaCirurgioesResponses;
+    }
+
+    private List<ResultadoDiarioCirurgiaoEntity> buscarResultadoDiarioCirurgiao(List<ResultadoMensalCirurgiaoEntity> listaResultadoMensal) {
+        List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario = new ArrayList<>();
+
+        for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity : listaResultadoMensal) {
+            for (ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity : resultadoMensalCirurgiaoEntity.getResultadosDiarios()) {
+                if (resultadoDiarioCirurgiaoEntity.getDia() == dia) {
+                    listaResultadoDiario.add(resultadoDiarioCirurgiaoEntity);
+                }
+            }
+        }
+
+        return listaResultadoDiario;
+    }
+
+    private void montarTabelaCirurgioes(List<TabelaCirurgioesResponse> tabelaCirurgioesResponses, List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario) {
+        for (ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity: listaResultadoDiario) {
+            TabelaCirurgioesResponse tabelaCirurgioesResponse = new TabelaCirurgioesResponse(
+                    resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getId(),
+                    resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getNome(),
+                    resultadoDiarioCirurgiaoEntity.getAtendimentos(),
+                    resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getAtendimentos(),
+                    calculaAtendimentosNoAno(resultadoDiarioCirurgiaoEntity)
+
+            );
+
+            tabelaCirurgioesResponses.add(tabelaCirurgioesResponse);
+        }
+    }
+
+    private int calculaAtendimentosNoAno(ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity) {
+        int atendimentosAno = 0;
+
+        for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity : resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getResultadosMensais()) {
+            atendimentosAno += resultadoMensalCirurgiaoEntity.getAtendimentos();
+        }
+
+        return atendimentosAno;
     }
 
 }

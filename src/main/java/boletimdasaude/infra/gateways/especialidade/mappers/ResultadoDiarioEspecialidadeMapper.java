@@ -10,7 +10,7 @@ public class ResultadoDiarioEspecialidadeMapper {
 
     public static ResultadoDiarioEspecialidadeEntity toEntity(ResultadoDiarioEspecialidade domain) {
         return new ResultadoDiarioEspecialidadeEntity(
-                domain.data(),
+                domain.dia(),
                 domain.atendimentos(),
                 domain.medico()
         );
@@ -25,7 +25,7 @@ public class ResultadoDiarioEspecialidadeMapper {
     public static ResultadoDiarioEspecialidade toDomain(ResultadoDiarioEspecialidadeEntity entity) {
         return new ResultadoDiarioEspecialidade(
                 entity.getId(),
-                entity.getData(),
+                entity.getDia(),
                 entity.getAtendimentos(),
                 entity.getMedico()
         );
@@ -34,8 +34,7 @@ public class ResultadoDiarioEspecialidadeMapper {
     public static List<ResultadoDiarioEspecialidade> toDomainList(List<ResultadoDiarioEspecialidadeEntity> entityList) {
         return entityList.stream()
                 .map(ResultadoDiarioEspecialidadeMapper::toDomain)
-                .collect(Collectors.toList()
-        );
+                .toList();
     }
 
 }

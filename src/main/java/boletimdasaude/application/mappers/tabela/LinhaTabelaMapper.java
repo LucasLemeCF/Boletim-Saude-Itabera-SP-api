@@ -1,5 +1,6 @@
 package boletimdasaude.application.mappers.tabela;
 
+import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
 
@@ -11,7 +12,7 @@ public class LinhaTabelaMapper {
     public static ResultadoDiarioEspecialidade toDomain(LinhaTabelaRequest request, Date data) {
         return new ResultadoDiarioEspecialidade (
                 null,
-                data,
+                ConverterData.toDia(data),
                 request.pacientesAtendidos(),
                 null
         );

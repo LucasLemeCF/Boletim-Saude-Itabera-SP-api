@@ -23,7 +23,7 @@ public class ResultadoDiarioCirurgiaoMapper {
     public static ResultadoDiarioCirurgiao toDomain(ResultadoDiarioCirurgiaoEntity entity) {
         return new ResultadoDiarioCirurgiao(
                 entity.getId(),
-                entity.getData(),
+                entity.getDia(),
                 entity.getAtendimentos()
         );
     }

@@ -12,15 +12,15 @@ public class ResultadoDiarioCirurgiaoEntity {
     @Column(name = "ID_RESULTADO_DIARIO_CIRURGIAO")
     private Long id;
     @Column(name = "DES_DATA")
-    private Date data;
+    private int dia;
     @Column(name = "DES_ATENDIMENTOS")
     private int atendimentos;
     @ManyToOne
     @JoinColumn(name="ID_RESULTADO_MENSAL", nullable = true)
     private ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao;
 
-    public ResultadoDiarioCirurgiaoEntity(Date data, int atendimentos) {
-        this.data = data;
+    public ResultadoDiarioCirurgiaoEntity(int dia, int atendimentos) {
+        this.dia = dia;
         this.atendimentos = atendimentos;
     }
 
@@ -34,12 +34,12 @@ public class ResultadoDiarioCirurgiaoEntity {
         this.id = id;
     }
 
-    public Date getData() {
-        return data;
+    public int getDia() {
+        return dia;
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public void setDia(int dia) {
+        this.dia = dia;
     }
 
     public int getAtendimentos() {

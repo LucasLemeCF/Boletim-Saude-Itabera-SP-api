@@ -3,6 +3,7 @@ package boletimdasaude.application.usecases.tabela;
 import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaEspecialidadeRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
+import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.application.requests.tabela.TabelaRequest;
 import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.domain.enums.TipoLinha;
@@ -11,17 +12,18 @@ import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public class SalvarDadosEspecialidadeInteractor {
+public class DadosEspecialidadeInteractor {
 
     private TabelaRequest tabelaRequest;
 
     private final ITabelaEspecialidadeRepository tabelaEspecialidadeRepository;
     private final IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository;
 
-    public SalvarDadosEspecialidadeInteractor(
+    public DadosEspecialidadeInteractor(
             ITabelaEspecialidadeRepository tabelaEspecialidadeRepository,
             IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository
     ) {
@@ -70,7 +72,7 @@ public class SalvarDadosEspecialidadeInteractor {
                 tabelaEspecialidadeRepository.buscarEspecialidade(dadosEspecialidade.componenteId());
 
         if (especialidadeOptional.isPresent()) {
-            if (!existeDadosParaOMes(dadosEspecialidade.componenteId())) {
+            if (!existeDadosParaOMes(dadosEspecialidade.componenteId(), this.tabelaRequest.data())) {
                 criarDadosIniciaisDoMes(dadosEspecialidade, especialidadeOptional.get());
             } if (!existeDadosParaODia(dadosEspecialidade.componenteId())) {
                 adicionarDadosDoDia(dadosEspecialidade, especialidadeOptional.get().medicoAtual());
@@ -80,21 +82,8 @@ public class SalvarDadosEspecialidadeInteractor {
         }
     }
 
-    private boolean existeDadosParaOMes(Long especialidadeId) {
-       return resultadoMensalEspecialidadeRepository.existeMesAnoEspecialidade(this.tabelaRequest.data(), especialidadeId);
-    }
-
-    private List<ResultadoDiarioEspecialidade> adicionaDadosPrimeiroDiaDoMes(LinhaTabelaRequest dadosEspecialidade, String nomeMedicoAtual) {
-        List<ResultadoDiarioEspecialidade> resultadoDiarioEspecialidades = new ArrayList<>();
-
-        resultadoDiarioEspecialidades.add(new ResultadoDiarioEspecialidade(
-                null,
-                this.tabelaRequest.data(),
-                dadosEspecialidade.pacientesAtendidos(),
-                nomeMedicoAtual
-        ));
-
-        return resultadoDiarioEspecialidades;
+    private boolean existeDadosParaOMes(Long especialidadeId, Date data) {
+       return resultadoMensalEspecialidadeRepository.existeMesAnoEspecialidade(data, especialidadeId);
     }
 
     private void criarDadosIniciaisDoMes(LinhaTabelaRequest dadosEspecialidade, Especialidade especialidade) {
@@ -111,6 +100,19 @@ public class SalvarDadosEspecialidadeInteractor {
         resultadoMensalEspecialidadeRepository.salvarDadosIniciaisDoMes(resultadoMensal, especialidade.id());
     }
 
+    private List<ResultadoDiarioEspecialidade> adicionaDadosPrimeiroDiaDoMes(LinhaTabelaRequest dadosEspecialidade, String nomeMedicoAtual) {
+        List<ResultadoDiarioEspecialidade> resultadoDiarioEspecialidades = new ArrayList<>();
+
+        resultadoDiarioEspecialidades.add(new ResultadoDiarioEspecialidade(
+                null,
+                ConverterData.toDia(this.tabelaRequest.data()),
+                dadosEspecialidade.pacientesAtendidos(),
+                nomeMedicoAtual
+        ));
+
+        return resultadoDiarioEspecialidades;
+    }
+
     private boolean existeDadosParaODia(Long especialidadeId) {
         return resultadoMensalEspecialidadeRepository.existeDiaEspecialidade(this.tabelaRequest.data(), especialidadeId);
     }
@@ -118,12 +120,12 @@ public class SalvarDadosEspecialidadeInteractor {
     private void adicionarDadosDoDia(LinhaTabelaRequest dadosEspecialidade, String medicoAtual) {
         ResultadoDiarioEspecialidade  resultadoDiario = new ResultadoDiarioEspecialidade(
                 null,
-                this.tabelaRequest.data(),
+                ConverterData.toDia(tabelaRequest.data()),
                 dadosEspecialidade.pacientesAtendidos(),
                 medicoAtual
         );
 
-        resultadoMensalEspecialidadeRepository.salvarDadosDoDia(resultadoDiario, dadosEspecialidade.componenteId());
+        resultadoMensalEspecialidadeRepository.salvarDadosDoDia(resultadoDiario, dadosEspecialidade.componenteId(), tabelaRequest.data());
     }
 
     private void atualizarDadosDoDia(LinhaTabelaRequest dadosEspecialidade) {
@@ -131,6 +133,10 @@ public class SalvarDadosEspecialidadeInteractor {
                 this.tabelaRequest.data(),
                 dadosEspecialidade
         );
+    }
+
+    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidade(Date data) {
+        return resultadoMensalEspecialidadeRepository.buscarDadosEspecialidades(data);
     }
 
 }

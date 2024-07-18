@@ -1,10 +1,8 @@
 package boletimdasaude.domain.especialidade;
 
-import java.util.Date;
-
 public record ResultadoDiarioEspecialidade(
         Long id,
-        Date data,
+        int dia,
         int atendimentos,
         String medico
 ) {

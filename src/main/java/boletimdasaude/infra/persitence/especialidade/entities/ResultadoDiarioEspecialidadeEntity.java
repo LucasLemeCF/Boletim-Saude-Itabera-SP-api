@@ -12,7 +12,7 @@ public class ResultadoDiarioEspecialidadeEntity {
     @Column(name = "ID_RESULTADO_DIARIO")
     private Long id;
     @Column(name = "DES_DATA")
-    private Date data;
+    private int dia;
     @Column(name = "DES_ATENDIMENTOS")
     private int atendimentos;
     @Column(name = "DES_MEDICO")
@@ -21,8 +21,8 @@ public class ResultadoDiarioEspecialidadeEntity {
     @JoinColumn(name="ID_RESULTADO_MENSAL", nullable = true)
     private ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidade;
 
-    public ResultadoDiarioEspecialidadeEntity(Date data, int atendimentos, String medico) {
-        this.data = data;
+    public ResultadoDiarioEspecialidadeEntity(int dia, int atendimentos, String medico) {
+        this.dia = dia;
         this.atendimentos = atendimentos;
         this.medico = medico;
     }
@@ -33,12 +33,12 @@ public class ResultadoDiarioEspecialidadeEntity {
 
     public void setId(Long id) { this.id = id; }
 
-    public Date getData() {
-        return data;
+    public int getDia() {
+        return dia;
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public void setDia(int dia) {
+        this.dia = dia;
     }
 
     public int getAtendimentos() {

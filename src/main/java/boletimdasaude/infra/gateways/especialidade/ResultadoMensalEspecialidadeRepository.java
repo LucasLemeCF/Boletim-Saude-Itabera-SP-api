@@ -2,13 +2,13 @@ package boletimdasaude.infra.gateways.especialidade;
 
 import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
+import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.config.exceptions.NotFoundException;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoDiarioEspecialidadeMapper;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
-import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoMensalCirurgiaoEntity;
 import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.IResultadoMensalEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.entities.EspecialidadeEntity;
@@ -16,7 +16,9 @@ import boletimdasaude.infra.persitence.especialidade.entities.IResultadoDiarioEs
 import boletimdasaude.infra.persitence.especialidade.entities.ResultadoDiarioEspecialidadeEntity;
 import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalEspecialidadeRepository {
@@ -54,9 +56,14 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     }
 
     @Override
-    public ResultadoMensalEspecialidade salvarDadosDoDia(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, Long especialidadeId) {
-        ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = buscarMesAnoEspecialidade(resultadoDiarioEspecialidade.data(), especialidadeId);
+    public ResultadoMensalEspecialidade salvarDadosDoDia(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, Long especialidadeId, Date data) {
         ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = ResultadoDiarioEspecialidadeMapper.toEntity(resultadoDiarioEspecialidade);
+
+        this.dia = resultadoDiarioEspecialidade.dia();
+        this.mes = ConverterData.toMes(data);
+        this.ano = ConverterData.toAno(data);
+
+        ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = buscarMesAnoEspecialidade(data, especialidadeId);
         resultadoDiarioEspecialidadeEntity.setResultadoMensal(resultadoMensalEspecialidadeEntity);
 
         resultadoMensalEspecialidadeEntity.getResultadosDiarios().add(resultadoDiarioEspecialidadeEntity);
@@ -125,16 +132,15 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     }
 
     private boolean mesmoDia(ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity) {
-        return ConverterData.toDia(resultadoDiarioEspecialidadeEntity.getData()) == dia;
+        return resultadoDiarioEspecialidadeEntity.getDia() == dia;
     }
 
     private ResultadoMensalEspecialidadeEntity buscarMesAnoEspecialidade(Date data, Long especialidadeId) {
         ResultadoMensalEspecialidadeEntity resultado = null;
 
-        Optional<EspecialidadeEntity> especialidadeEntity = especialidadeRepositoryJpa.findById(especialidadeId);
+        instanciaVariaveis(data);
 
-        int mes = ConverterData.toMes(data);
-        int ano = ConverterData.toAno(data);
+        Optional<EspecialidadeEntity> especialidadeEntity = especialidadeRepositoryJpa.findById(especialidadeId);
 
         if (especialidadeEntity.isPresent()) {
             for(ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity : especialidadeEntity.get().getResultadosMensais()) {
@@ -169,6 +175,49 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         resultadoMensalEspecialidadeRepositoryJpa.save(resultadoMensalEspecialidadeEntity);
 
         return ResultadoDiarioEspecialidadeMapper.toDomain(resultadoDiarioEspecialidadeEntity);
+    }
+
+    @Override
+    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidades(Date data) {
+        List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses = new ArrayList<>();
+
+        instanciaVariaveis(data);
+
+        List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal = resultadoMensalEspecialidadeRepositoryJpa.findByMesAndAno(mes, ano);
+        List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario = buscarResultadoDiarioEspecialidade(listaResultadoMensal);
+
+        montarTabelaEspecialidades(tabelaEspecialidadesResponses, listaResultadoDiario);
+
+        return tabelaEspecialidadesResponses;
+    }
+
+    private List<ResultadoDiarioEspecialidadeEntity> buscarResultadoDiarioEspecialidade( List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal) {
+        List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario = new ArrayList<>();
+
+        for (ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity : listaResultadoMensal) {
+            for (ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity : resultadoMensalEspecialidadeEntity.getResultadosDiarios()) {
+                if (resultadoDiarioEspecialidadeEntity.getDia() == dia) {
+                    listaResultadoDiario.add(resultadoDiarioEspecialidadeEntity);
+                }
+            }
+        }
+
+        return listaResultadoDiario;
+    }
+
+    private void montarTabelaEspecialidades(List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses, List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario) {
+        for (ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity : listaResultadoDiario) {
+            TabelaEspecialidadesResponse tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
+                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId(),
+                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getEspecialidade(),
+                    resultadoDiarioEspecialidadeEntity.getAtendimentos(),
+                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaDiaria(),
+                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getAtendimentos(),
+                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaMensal()
+            );
+
+            tabelaEspecialidadesResponses.add(tabelaEspecialidadesResponse);
+        }
     }
 
 }

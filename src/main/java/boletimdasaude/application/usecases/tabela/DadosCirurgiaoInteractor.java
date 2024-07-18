@@ -3,6 +3,7 @@ package boletimdasaude.application.usecases.tabela;
 import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaCirurgiaoRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
+import boletimdasaude.application.responses.tabela.TabelaCirurgioesResponse;
 import boletimdasaude.application.requests.tabela.TabelaRequest;
 import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
@@ -11,17 +12,18 @@ import boletimdasaude.domain.cirurgiao.ResultadoDiarioCirurgiao;
 import boletimdasaude.domain.cirurgiao.ResultadoMensalCirurgiao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public class SalvarDadosCirurgiaoInteractor {
+public class DadosCirurgiaoInteractor {
 
     private TabelaRequest tabelaRequest;
 
     private final ITabelaCirurgiaoRepository tabelaCirurgiaoRepository;
     private final IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository;
 
-    public SalvarDadosCirurgiaoInteractor(
+    public DadosCirurgiaoInteractor(
             ITabelaCirurgiaoRepository tabelaCirurgiaoRepository,
             IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository
     ) {
@@ -89,7 +91,7 @@ public class SalvarDadosCirurgiaoInteractor {
 
         resultadoDiarioCirurgiaos.add(new ResultadoDiarioCirurgiao(
                 null,
-                this.tabelaRequest.data(),
+                ConverterData.toDia(this.tabelaRequest.data()),
                 dadosCirurgiao.pacientesAtendidos()
         ));
 
@@ -115,11 +117,11 @@ public class SalvarDadosCirurgiaoInteractor {
     private void adicionarDadosDoDia(LinhaTabelaRequest dadosCirurgiao) {
         ResultadoDiarioCirurgiao  resultadoDiario = new ResultadoDiarioCirurgiao(
                 null,
-                this.tabelaRequest.data(),
+                ConverterData.toDia(tabelaRequest.data()),
                 dadosCirurgiao.pacientesAtendidos()
         );
 
-        resultadoMensalCirurgiaoRepository.salvarDadosDoDia(resultadoDiario, dadosCirurgiao.componenteId());
+        resultadoMensalCirurgiaoRepository.salvarDadosDoDia(resultadoDiario, dadosCirurgiao.componenteId(), tabelaRequest.data());
     }
 
     private void atualizarDadosDoDia(LinhaTabelaRequest dadosCirurgiao) {
@@ -127,6 +129,10 @@ public class SalvarDadosCirurgiaoInteractor {
                 this.tabelaRequest.data(),
                 dadosCirurgiao
         );
+    }
+
+    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(Date data) {
+        return resultadoMensalCirurgiaoRepository.buscarDadosCirurgioes(data);
     }
 
 }

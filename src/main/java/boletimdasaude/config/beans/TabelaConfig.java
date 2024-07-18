@@ -4,8 +4,8 @@ import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRe
 import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaCirurgiaoRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaEspecialidadeRepository;
-import boletimdasaude.application.usecases.tabela.SalvarDadosCirurgiaoInteractor;
-import boletimdasaude.application.usecases.tabela.SalvarDadosEspecialidadeInteractor;
+import boletimdasaude.application.usecases.tabela.DadosCirurgiaoInteractor;
+import boletimdasaude.application.usecases.tabela.DadosEspecialidadeInteractor;
 import boletimdasaude.application.usecases.tabela.TabelaInteractor;
 import boletimdasaude.infra.gateways.cirurgiao.ProcedimentoCirurgiaoRepository;
 import boletimdasaude.infra.gateways.especialidade.ResultadoMensalEspecialidadeRepository;
@@ -21,16 +21,16 @@ import org.springframework.context.annotation.Configuration;
 public class TabelaConfig {
 
     @Bean
-    TabelaInteractor tabelaInteractor(SalvarDadosEspecialidadeInteractor salvarDadosEspecialidadeInteractor, SalvarDadosCirurgiaoInteractor salvarDadosCirurgiaoInteractor) {
+    TabelaInteractor tabelaInteractor(DadosEspecialidadeInteractor salvarDadosEspecialidadeInteractor, DadosCirurgiaoInteractor salvarDadosCirurgiaoInteractor) {
         return new TabelaInteractor(salvarDadosEspecialidadeInteractor, salvarDadosCirurgiaoInteractor);
     }
 
     @Bean
-    SalvarDadosEspecialidadeInteractor salvarDadosEspecialidadeInteractor(
+    DadosEspecialidadeInteractor salvarDadosEspecialidadeInteractor(
                 ITabelaEspecialidadeRepository tabelaEspecialidadeRepository,
                 IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository
     ) {
-        return new SalvarDadosEspecialidadeInteractor(tabelaEspecialidadeRepository, resultadoMensalEspecialidadeRepository);
+        return new DadosEspecialidadeInteractor(tabelaEspecialidadeRepository, resultadoMensalEspecialidadeRepository);
     }
 
     @Bean
@@ -46,12 +46,13 @@ public class TabelaConfig {
     }
 
     @Bean
-    SalvarDadosCirurgiaoInteractor salvarDadosCirurgiaoInteractor( ITabelaCirurgiaoRepository tabelaCirurgiaoRepository,
-                                                                   IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository) {
-        return new SalvarDadosCirurgiaoInteractor(tabelaCirurgiaoRepository, resultadoMensalCirurgiaoRepository);
+    DadosCirurgiaoInteractor salvarDadosCirurgiaoInteractor(ITabelaCirurgiaoRepository tabelaCirurgiaoRepository,
+                                                            IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository) {
+        return new DadosCirurgiaoInteractor(tabelaCirurgiaoRepository, resultadoMensalCirurgiaoRepository);
     }
 
-    @Bean ITabelaCirurgiaoRepository tabelaCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa) {
+    @Bean
+    ITabelaCirurgiaoRepository tabelaCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa) {
         return new ProcedimentoCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa);
     }
 

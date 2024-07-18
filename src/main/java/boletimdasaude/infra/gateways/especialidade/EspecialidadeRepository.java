@@ -52,8 +52,8 @@ public class EspecialidadeRepository implements IEspecialidadeRepository, ITabel
                 id,
                 especialidade.especialidade() != null ? especialidade.especialidade() : oldEntity.getEspecialidade(),
                 especialidade.medicoAtual() != null ? especialidade.medicoAtual() : oldEntity.getMedicoAtual(),
-                especialidade.metaDiariaAtual() != 0 ? especialidade.metaDiariaAtual() : oldEntity.getMetaDiariaAtual(),
-                especialidade.metaMensalAtual() != 0 ? especialidade.metaMensalAtual() : oldEntity.getMetaMensalAtual(),
+                especialidade.metaDiariaAtual(),
+                especialidade.metaMensalAtual(),
                 resultadoMensalEspecialidadeMapper.toEntityList(especialidade.resultadosMensais())
         );
 
