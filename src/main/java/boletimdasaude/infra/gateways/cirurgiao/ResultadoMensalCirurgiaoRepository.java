@@ -205,6 +205,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         for (ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity: listaResultadoDiario) {
             TabelaCirurgioesResponse tabelaCirurgioesResponse = new TabelaCirurgioesResponse(
                     resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getId(),
+                    resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getCirurgiao().getNome(),
                     resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getNome(),
                     resultadoDiarioCirurgiaoEntity.getAtendimentos(),
                     resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getAtendimentos(),
