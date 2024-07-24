@@ -8,6 +8,6 @@ public interface IOrdemTabelaRepository {
 
     OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela);
 
-    List<OrdemTabela> buscarOrdemTabela();
+    OrdemTabela buscarOrdemTabela(String data);
 
 }

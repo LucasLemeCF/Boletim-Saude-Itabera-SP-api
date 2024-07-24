@@ -9,6 +9,8 @@ public class OrdemTabelaEntityMapper {
 
     public OrdemTabelaEntity toEntity(OrdemTabela domain) {
         return new OrdemTabelaEntity(
+                domain.data(),
+                domain.ativo(),
                 LinhaTabelaEntityMapper.toEntityList(domain.linhasTabela()),
                 CabecalhoTabelaEntityMapper.toEntityList(domain.cabecalhosTabela())
         );
@@ -17,6 +19,8 @@ public class OrdemTabelaEntityMapper {
     public static OrdemTabela toDomain(OrdemTabelaEntity entity) {
         return new OrdemTabela(
                 entity.getId(),
+                entity.getData(),
+                entity.isAtivo(),
                 LinhaTabelaEntityMapper.toDomainList(entity.getLinhasTabelaEntity()),
                 CabecalhoTabelaEntityMapper.toDomainList(entity.getCabecalhosTabelaEntity())
         );

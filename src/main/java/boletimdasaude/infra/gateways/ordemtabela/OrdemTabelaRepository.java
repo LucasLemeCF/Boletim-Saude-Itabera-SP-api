@@ -35,7 +35,7 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
 
     @Override
     public OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela) {
-        deletarTabelaAnterior();
+        desativaOrdensAnteriores();
 
         OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
         entity = repository.saveAndFlush(entity);
@@ -46,11 +46,15 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
         return OrdemTabelaEntityMapper.toDomain(entity);
     }
 
-    private void deletarTabelaAnterior() {
-        linhaTabelaRepository.deleteAll();
-        textoCabecalhoTabelaRepository.deleteAll();
-        cabecalhoTabelaRepository.deleteAll();
-        repository.deleteAll();
+    private void desativaOrdensAnteriores() {
+        List<OrdemTabelaEntity> todasOrdens = repository.findAll();
+
+        for (OrdemTabelaEntity ordem : todasOrdens) {
+            if (ordem.isAtivo()) {
+                ordem.setAtivo(false);
+                repository.saveAndFlush(ordem);
+            }
+        }
     }
 
     private void salvarLinhaTabela(OrdemTabelaEntity entity) {
@@ -81,9 +85,16 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
     }
 
     @Override
-    public List<OrdemTabela> buscarOrdemTabela() {
+    public OrdemTabela buscarOrdemTabela(String data) {
         List<OrdemTabelaEntity> ordemTabelaEntities = repository.findAll();
-        return OrdemTabelaEntityMapper.toDomainList(ordemTabelaEntities);
+
+        for (OrdemTabelaEntity ordemTabelaEntity : ordemTabelaEntities) {
+            if (ordemTabelaEntity.getData().equals(data)) {
+                return OrdemTabelaEntityMapper.toDomain(ordemTabelaEntity);
+            }
+        }
+
+        return null;
     }
 
 }

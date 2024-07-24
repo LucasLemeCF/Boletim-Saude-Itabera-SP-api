@@ -17,8 +17,8 @@ public class EditarOrdemTabelaInteractor {
         return tabelaRepository.editarOrdemTabela(ordemTabela);
     }
 
-    public List<OrdemTabela> buscarOrdemTabela() {
-        return tabelaRepository.buscarOrdemTabela();
+    public OrdemTabela buscarOrdemTabela(String data) {
+        return tabelaRepository.buscarOrdemTabela(data);
     }
 
 }

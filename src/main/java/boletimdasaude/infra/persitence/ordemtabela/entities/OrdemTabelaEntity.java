@@ -13,19 +13,29 @@ public class OrdemTabelaEntity {
     @Column(name = "ID_ORDEM_TABELA")
     private Long id;
 
+    @Column(name = "DATA")
+    private String data;
+
+    @Column(name = "ATIVO")
+    private boolean ativo;
+
     @OneToMany(mappedBy = "ordemTabela", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LinhaTabelaEntity> linhasTabelaEntity;
 
     @OneToMany(mappedBy = "ordemTabela", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CabecalhoTabelaEntity> cabecalhosTabelaEntity;
 
-    public OrdemTabelaEntity(Long id, List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
+    public OrdemTabelaEntity(Long id, String data, boolean ativo, List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
         this.id = id;
+        this.data = data;
+        this.ativo = ativo;
         this.linhasTabelaEntity = linhasTabelaEntity;
         this.cabecalhosTabelaEntity = cabecalhosTabelaEntity;
     }
 
-    public OrdemTabelaEntity(List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
+    public OrdemTabelaEntity(String data, boolean ativo, List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
+        this.data = data;
+        this.ativo = ativo;
         this.linhasTabelaEntity = linhasTabelaEntity;
         this.cabecalhosTabelaEntity = cabecalhosTabelaEntity;
     }
@@ -38,6 +48,22 @@ public class OrdemTabelaEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 
     public List<LinhaTabelaEntity> getLinhasTabelaEntity() {

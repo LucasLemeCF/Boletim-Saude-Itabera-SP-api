@@ -11,6 +11,8 @@ public class EditarOrdemTabelaMapper {
     public static OrdemTabela toDomain(EditarOrdemTabelaRequest request) {
         return new OrdemTabela(
                 null,
+                request.data(),
+                true,
                 LinhaOrdemTabelaMapper.toDomainList(request.linhas()),
                 CabecalhoOrdemTabelaMapper.toDomainList(request.cabecalhos())
         );
