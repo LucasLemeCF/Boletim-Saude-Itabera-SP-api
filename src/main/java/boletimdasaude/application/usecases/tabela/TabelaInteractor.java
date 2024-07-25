@@ -1,9 +1,7 @@
 package boletimdasaude.application.usecases.tabela;
 
 import boletimdasaude.application.requests.tabela.TabelaRequest;
-import boletimdasaude.application.responses.tabela.TabelaResponse;
-
-import java.util.Date;
+import boletimdasaude.application.responses.tabela.*;
 
 public class TabelaInteractor {
 
@@ -20,10 +18,11 @@ public class TabelaInteractor {
         dadosCirurgiaoInteractor.salvarDadosCirurgiao(request);
     }
 
-    public TabelaResponse buscarDadosTabela(Date data) {
+    public TabelaResponse buscarDadosTabela(String data) {
         return new TabelaResponse(
-            dadosEspecialidadeInteractor.buscarDadosEspecialidade(data),
-            dadosCirurgiaoInteractor.buscarDadosCirurgioes(data)
+            data,
+            dadosEspecialidadeInteractor.organizarDadosEspecialidades(data),
+            dadosCirurgiaoInteractor.organizarDadosCirurgioes(data)
         );
     }
 

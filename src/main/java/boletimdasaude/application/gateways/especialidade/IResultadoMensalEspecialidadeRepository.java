@@ -1,6 +1,7 @@
 package boletimdasaude.application.gateways.especialidade;
 
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
+import boletimdasaude.application.responses.tabela.TabelaCabecalhoEspecialidadesResponse;
 import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
@@ -20,6 +21,6 @@ public interface IResultadoMensalEspecialidadeRepository {
 
     ResultadoDiarioEspecialidade atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest);
 
-    List<TabelaEspecialidadesResponse> buscarDadosEspecialidades(Date data);
+    List<TabelaEspecialidadesResponse> buscarDadosEspecialidades(String data);
 
 }

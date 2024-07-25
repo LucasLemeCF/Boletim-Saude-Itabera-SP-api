@@ -1,8 +1,10 @@
 package boletimdasaude.application.usecases.tabela;
 
 import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRepository;
+import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaCirurgiaoRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
+import boletimdasaude.application.responses.tabela.TabelaCabecalhoCirurgioesResponse;
 import boletimdasaude.application.responses.tabela.TabelaCirurgioesResponse;
 import boletimdasaude.application.requests.tabela.TabelaRequest;
 import boletimdasaude.application.util.ConverterData;
@@ -12,7 +14,7 @@ import boletimdasaude.domain.cirurgiao.ResultadoDiarioCirurgiao;
 import boletimdasaude.domain.cirurgiao.ResultadoMensalCirurgiao;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,13 +24,19 @@ public class DadosCirurgiaoInteractor {
 
     private final ITabelaCirurgiaoRepository tabelaCirurgiaoRepository;
     private final IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository;
+    private final IOrdemTabelaRepository ordemTabelaRepository;
+
+    private List<TabelaCabecalhoCirurgioesResponse> cabecalhosCirurgioes = new ArrayList<>();
+    private List<TabelaCirurgioesResponse> dadosCirurgioes;
 
     public DadosCirurgiaoInteractor(
             ITabelaCirurgiaoRepository tabelaCirurgiaoRepository,
-            IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository
+            IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository,
+            IOrdemTabelaRepository ordemTabelaRepository
     ) {
         this.tabelaCirurgiaoRepository = tabelaCirurgiaoRepository;
         this.resultadoMensalCirurgiaoRepository = resultadoMensalCirurgiaoRepository;
+        this.ordemTabelaRepository = ordemTabelaRepository;
     }
 
     public void salvarDadosCirurgiao(TabelaRequest tabelaRequest) {
@@ -131,8 +139,70 @@ public class DadosCirurgiaoInteractor {
         );
     }
 
-    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(Date data) {
+    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(String data) {
         return resultadoMensalCirurgiaoRepository.buscarDadosCirurgioes(data);
+    }
+
+    public List<TabelaCabecalhoCirurgioesResponse> buscarCabecalhosCirurgioes(String data) {
+        return ordemTabelaRepository.buscarCabecalhosCirurgioes(data);
+    }
+
+    public List<TabelaCabecalhoCirurgioesResponse> organizarDadosCirurgioes(String data) {
+        List<TabelaCabecalhoCirurgioesResponse> cabecalhosCirurgioes = buscarCabecalhosCirurgioes(data);
+        List<TabelaCirurgioesResponse> dadosCirurgioes = buscarDadosCirurgioes(data);
+
+        ordenarCabecalhosCirurgioes(cabecalhosCirurgioes);
+        ordenarDadosCirurgioes(dadosCirurgioes);
+
+        this.cabecalhosCirurgioes = cabecalhosCirurgioes;
+        this.dadosCirurgioes = dadosCirurgioes;
+
+        agregarDadosCirurgioes();
+
+        return cabecalhosCirurgioes;
+    }
+
+    private void ordenarCabecalhosCirurgioes(List<TabelaCabecalhoCirurgioesResponse> cabecalhos) {
+        cabecalhos.sort(Comparator.comparing(TabelaCabecalhoCirurgioesResponse::posicao));
+    }
+
+    private void ordenarDadosCirurgioes(List<TabelaCirurgioesResponse> dadosCirurgioes) {
+        dadosCirurgioes.sort(Comparator.comparing(TabelaCirurgioesResponse::posicao));
+    }
+
+    private void agregarDadosCirurgioes() {
+        for (int i = 0; i < cabecalhosCirurgioes.size(); i++) {
+            percorrerCirurgiao(i);
+        }
+    }
+
+    private void percorrerCirurgiao(int i) {
+        for (TabelaCirurgioesResponse cirurgiao : dadosCirurgioes) {
+            validarSeCirurgiaoPertenceAoCabecalho(i, cirurgiao);
+        }
+    }
+
+    private void validarSeCirurgiaoPertenceAoCabecalho(int i, TabelaCirurgioesResponse cirurgiao) {
+        if (cirurgiaoPertenceAoCabecalho(i, cirurgiao)){
+            cabecalhosCirurgioes.get(i).cirurgioes().add(cirurgiao);
+        }
+    }
+
+    private boolean cirurgiaoPertenceAoCabecalho(int i, TabelaCirurgioesResponse cirurgiao) {
+        return ultimoLoopCirurgiao(i) && posicaoCirurgiaoMaiorQuePosicaoCabecalho(i, cirurgiao) ||
+                !ultimoLoopCirurgiao(i) && posicaoCirurgiaoMaiorQuePosicaoCabecalho(i, cirurgiao) && posicaoCirurgiaoMenorQueProximaPosicaoCabecalho(i, cirurgiao);
+    }
+
+    private boolean ultimoLoopCirurgiao(int i) {
+        return i == cabecalhosCirurgioes.size() - 1;
+    }
+
+    private boolean posicaoCirurgiaoMaiorQuePosicaoCabecalho(int i, TabelaCirurgioesResponse cirurgiao) {
+        return cirurgiao.posicao() > cabecalhosCirurgioes.get(i).posicao();
+    }
+
+    private boolean posicaoCirurgiaoMenorQueProximaPosicaoCabecalho(int i, TabelaCirurgioesResponse cirurgiao) {
+        return cirurgiao.posicao() < cabecalhosCirurgioes.get(i + 1).posicao();
     }
 
 }

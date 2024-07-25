@@ -9,6 +9,7 @@ import boletimdasaude.domain.cirurgiao.ResultadoDiarioCirurgiao;
 import boletimdasaude.domain.cirurgiao.ResultadoMensalCirurgiao;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoDiarioCirurgiaoMapper;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
+import boletimdasaude.infra.gateways.ordemtabela.LinhaTabelaRepository;
 import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.IResultadoDiarioCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.IResultadoMensalCirurgiaoRepositoryJpa;
@@ -30,13 +31,16 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
     private final IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa;
     private final IResultadoMensalCirurgiaoRepositoryJpa resultadoMensalCirurgiaoRepositoryJpa;
     private final IResultadoDiarioCirurgiaoRepositoryJpa resultadoDiarioCirurgiaoRepositoryJpa;
+    private final LinhaTabelaRepository linhaTabelaRepository;
 
     public ResultadoMensalCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa,
                                               IResultadoMensalCirurgiaoRepositoryJpa resultadoMensalCirurgiaoRepositoryJpa,
-                                              IResultadoDiarioCirurgiaoRepositoryJpa resultadoDiarioCirurgiaoRepositoryJpa) {
+                                              IResultadoDiarioCirurgiaoRepositoryJpa resultadoDiarioCirurgiaoRepositoryJpa,
+                                              LinhaTabelaRepository linhaTabelaRepository) {
         this.procedimentoCirurgiaoRepositoryJpa = procedimentoCirurgiaoRepositoryJpa;
         this.resultadoMensalCirurgiaoRepositoryJpa = resultadoMensalCirurgiaoRepositoryJpa;
         this.resultadoDiarioCirurgiaoRepositoryJpa = resultadoDiarioCirurgiaoRepositoryJpa;
+        this.linhaTabelaRepository = linhaTabelaRepository;
     }
 
     @Override
@@ -97,6 +101,13 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         this.mes = ConverterData.toMes(data);
         this.ano = ConverterData.toAno(data);
     }
+
+    private void instanciaVariaveis(String data) {
+        this.dia = ConverterData.toDia(data);
+        this.mes = ConverterData.toMes(data);
+        this.ano = ConverterData.toAno(data);
+    }
+
 
     private ResultadoDiarioCirurgiaoEntity percorrerResultadosMensal(ProcedimentoCirurgiaoEntity procedimentoCirurgiaoEntity) {
         ResultadoDiarioCirurgiaoEntity resultado = null;
@@ -174,7 +185,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
     }
 
     @Override
-    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(Date data) {
+    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(String data) {
         List<TabelaCirurgioesResponse> tabelaCirurgioesResponses = new ArrayList<>();
 
         instanciaVariaveis(data);
@@ -203,7 +214,10 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
 
     private void montarTabelaCirurgioes(List<TabelaCirurgioesResponse> tabelaCirurgioesResponses, List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario) {
         for (ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity: listaResultadoDiario) {
+            Long posicao = linhaTabelaRepository.buscarPosicaoProcedimento(resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getId());
+
             TabelaCirurgioesResponse tabelaCirurgioesResponse = new TabelaCirurgioesResponse(
+                    posicao,
                     resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getId(),
                     resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getCirurgiao().getNome(),
                     resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getNome(),

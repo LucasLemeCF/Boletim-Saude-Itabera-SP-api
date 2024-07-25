@@ -20,6 +20,6 @@ public interface IResultadoMensalCirurgiaoRepository {
 
     ResultadoDiarioCirurgiao atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest);
 
-    List<TabelaCirurgioesResponse> buscarDadosCirurgioes(Date data);
+    List<TabelaCirurgioesResponse> buscarDadosCirurgioes(String data);
 
 }

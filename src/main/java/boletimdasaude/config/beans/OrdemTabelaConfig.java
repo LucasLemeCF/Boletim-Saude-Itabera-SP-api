@@ -2,6 +2,7 @@ package boletimdasaude.config.beans;
 
 import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.usecases.ordemtabela.EditarOrdemTabelaInteractor;
+import boletimdasaude.infra.gateways.ordemtabela.LinhaTabelaRepository;
 import boletimdasaude.infra.gateways.ordemtabela.OrdemTabelaRepository;
 import boletimdasaude.infra.gateways.ordemtabela.mappers.CabecalhoTabelaEntityMapper;
 import boletimdasaude.infra.gateways.ordemtabela.mappers.LinhaTabelaEntityMapper;
@@ -47,6 +48,11 @@ public class OrdemTabelaConfig {
     @Bean
     LinhaTabelaEntityMapper itemTabelaEspecialidadeEntityMapper() {
         return new LinhaTabelaEntityMapper();
+    }
+
+    @Bean
+    LinhaTabelaRepository linhaTabelaRepository(ILinhaTabelaRepositoryJpa itemEspecialidadeRepository) {
+        return new LinhaTabelaRepository(itemEspecialidadeRepository);
     }
 
 }

@@ -9,6 +9,7 @@ import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoDiarioEspecialidadeMapper;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
+import boletimdasaude.infra.gateways.ordemtabela.LinhaTabelaRepository;
 import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.IResultadoMensalEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.entities.EspecialidadeEntity;
@@ -30,13 +31,16 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     private final IEspecialidadeRepositoryJpa especialidadeRepositoryJpa;
     private final IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa;
     private final IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa;
+    private final LinhaTabelaRepository linhaTabelaRepository;
 
     public ResultadoMensalEspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepositoryJpa,
                                                   IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa,
-                                                  IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa) {
+                                                  IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa,
+                                                  LinhaTabelaRepository linhaTabelaRepository) {
         this.especialidadeRepositoryJpa = especialidadeRepositoryJpa;
         this.resultadoMensalEspecialidadeRepositoryJpa = resultadoMensalEspecialidadeRepositoryJpa;
         this.resultadoDiarioEspecialidadeRepositoryJpa = resultadoDiarioEspecialidadeRepositoryJpa;
+        this.linhaTabelaRepository = linhaTabelaRepository;
     }
 
     @Override
@@ -98,6 +102,12 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     }
 
     private void instanciaVariaveis(Date data) {
+        this.dia = ConverterData.toDia(data);
+        this.mes = ConverterData.toMes(data);
+        this.ano = ConverterData.toAno(data);
+    }
+
+    private void instanciaVariaveis(String data) {
         this.dia = ConverterData.toDia(data);
         this.mes = ConverterData.toMes(data);
         this.ano = ConverterData.toAno(data);
@@ -178,7 +188,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     }
 
     @Override
-    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidades(Date data) {
+    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidades(String data) {
         List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses = new ArrayList<>();
 
         instanciaVariaveis(data);
@@ -207,7 +217,10 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
 
     private void montarTabelaEspecialidades(List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses, List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario) {
         for (ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity : listaResultadoDiario) {
+            Long posicao = linhaTabelaRepository.buscarPosicaoEspecialidade(resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId());
+
             TabelaEspecialidadesResponse tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
+                    posicao,
                     resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId(),
                     resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getEspecialidade(),
                     resultadoDiarioEspecialidadeEntity.getAtendimentos(),

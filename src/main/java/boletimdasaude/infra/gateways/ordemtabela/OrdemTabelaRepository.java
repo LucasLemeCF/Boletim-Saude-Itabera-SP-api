@@ -2,8 +2,12 @@ package boletimdasaude.infra.gateways.ordemtabela;
 
 
 import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
+import boletimdasaude.application.responses.tabela.TabelaCabecalhoCirurgioesResponse;
+import boletimdasaude.application.responses.tabela.TabelaCabecalhoEspecialidadesResponse;
+import boletimdasaude.domain.enums.TipoLinha;
 import boletimdasaude.domain.ordemtabela.OrdemTabela;
 import boletimdasaude.infra.gateways.ordemtabela.mappers.OrdemTabelaEntityMapper;
+import boletimdasaude.infra.gateways.ordemtabela.mappers.TextoCabecalhoTabelaEntityMapper;
 import boletimdasaude.infra.persitence.ordemtabela.ICabecalhoTabelaRepositoryJpa;
 import boletimdasaude.infra.persitence.ordemtabela.ILinhaTabelaRepositoryJpa;
 import boletimdasaude.infra.persitence.ordemtabela.IOrdemTabelaRepositoryJpa;
@@ -13,7 +17,9 @@ import boletimdasaude.infra.persitence.ordemtabela.entities.LinhaTabelaEntity;
 import boletimdasaude.infra.persitence.ordemtabela.entities.OrdemTabelaEntity;
 import boletimdasaude.infra.persitence.ordemtabela.entities.TextoCabecalhoTabelaEntity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class OrdemTabelaRepository implements IOrdemTabelaRepository {
 
@@ -95,6 +101,59 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
         }
 
         return null;
+    }
+
+    @Override
+    public List<TabelaCabecalhoEspecialidadesResponse> buscarCabecalhosEspecialidades(String data) {
+        List<TabelaCabecalhoEspecialidadesResponse> cabecalhos = new ArrayList<>();
+
+        Optional<OrdemTabelaEntity> ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+
+        for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.get().getCabecalhosTabelaEntity()) {
+            if (cabecalho.getTipo().equals(TipoLinha.ESPECIALIDADE_CABECALHO)) {
+                cabecalhos.add(new TabelaCabecalhoEspecialidadesResponse(
+                    cabecalho.getPosicao(),
+                    TextoCabecalhoTabelaEntityMapper.toDomainList(cabecalho.getTextos()),
+                    new ArrayList<>()
+                ));
+            }
+        }
+
+        return cabecalhos;
+    }
+
+    private Optional<OrdemTabelaEntity> buscarOrdemTabelaEntity(String data) {
+        Optional<OrdemTabelaEntity> ordemTabelaEntity = Optional.ofNullable(repository.findByData(data));
+
+        if (ordemTabelaEntity.isEmpty()) {
+            List<OrdemTabelaEntity> ordemTabelaEntities = repository.findAll();
+            for (OrdemTabelaEntity ordemTabela : ordemTabelaEntities) {
+                if (ordemTabela.isAtivo()) {
+                    return ordemTabelaEntity = Optional.of(ordemTabela);
+                }
+            }
+        }
+
+        return ordemTabelaEntity;
+    }
+
+    @Override
+    public List<TabelaCabecalhoCirurgioesResponse> buscarCabecalhosCirurgioes(String data) {
+        List<TabelaCabecalhoCirurgioesResponse> cabecalhos = new ArrayList<>();
+
+        Optional<OrdemTabelaEntity> ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+
+        for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.get().getCabecalhosTabelaEntity()) {
+            if (cabecalho.getTipo().equals(TipoLinha.CIRURGIAO_CABECALHO)) {
+                cabecalhos.add(new TabelaCabecalhoCirurgioesResponse(
+                        cabecalho.getPosicao(),
+                        TextoCabecalhoTabelaEntityMapper.toDomainList(cabecalho.getTextos()),
+                        new ArrayList<>()
+                ));
+            }
+        }
+
+        return cabecalhos;
     }
 
 }

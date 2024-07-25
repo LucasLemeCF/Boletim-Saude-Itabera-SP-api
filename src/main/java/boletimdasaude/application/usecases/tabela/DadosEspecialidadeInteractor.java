@@ -1,8 +1,10 @@
 package boletimdasaude.application.usecases.tabela;
 
 import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
+import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaEspecialidadeRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
+import boletimdasaude.application.responses.tabela.TabelaCabecalhoEspecialidadesResponse;
 import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.application.requests.tabela.TabelaRequest;
 import boletimdasaude.application.util.ConverterData;
@@ -11,10 +13,7 @@ import boletimdasaude.domain.especialidade.Especialidade;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class DadosEspecialidadeInteractor {
 
@@ -22,13 +21,19 @@ public class DadosEspecialidadeInteractor {
 
     private final ITabelaEspecialidadeRepository tabelaEspecialidadeRepository;
     private final IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository;
+    private final IOrdemTabelaRepository ordemTabelaRepository;
+
+    private List<TabelaCabecalhoEspecialidadesResponse> cabecalhosEspecialidades = new ArrayList<>();
+    private List<TabelaEspecialidadesResponse> dadosEspecialidades;
 
     public DadosEspecialidadeInteractor(
             ITabelaEspecialidadeRepository tabelaEspecialidadeRepository,
-            IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository
+            IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository,
+            IOrdemTabelaRepository ordemTabelaRepository
     ) {
         this.tabelaEspecialidadeRepository = tabelaEspecialidadeRepository;
         this.resultadoMensalEspecialidadeRepository = resultadoMensalEspecialidadeRepository;
+        this.ordemTabelaRepository = ordemTabelaRepository;
     }
 
     public void salvarDadosEspecialidade(TabelaRequest tabelaRequest) {
@@ -135,8 +140,70 @@ public class DadosEspecialidadeInteractor {
         );
     }
 
-    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidade(Date data) {
+    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidade(String data) {
         return resultadoMensalEspecialidadeRepository.buscarDadosEspecialidades(data);
+    }
+
+    public List<TabelaCabecalhoEspecialidadesResponse> buscarCabecalhosEspecialidades(String data) {
+        return ordemTabelaRepository.buscarCabecalhosEspecialidades(data);
+    }
+
+    public List<TabelaCabecalhoEspecialidadesResponse> organizarDadosEspecialidades(String data) {
+        List<TabelaCabecalhoEspecialidadesResponse> cabecalhosEspecialidades = buscarCabecalhosEspecialidades(data);
+        List<TabelaEspecialidadesResponse> dadosEspecialidades = buscarDadosEspecialidade(data);
+
+        ordenarCabecalhosEspecialidades(cabecalhosEspecialidades);
+        ordenarDadosEspecialidades(dadosEspecialidades);
+
+        this.cabecalhosEspecialidades = cabecalhosEspecialidades;
+        this.dadosEspecialidades = dadosEspecialidades;
+
+        agregarDadosEspecialidades();
+
+        return cabecalhosEspecialidades;
+    }
+
+    private void ordenarCabecalhosEspecialidades(List<TabelaCabecalhoEspecialidadesResponse> cabecalhos) {
+        cabecalhos.sort(Comparator.comparing(TabelaCabecalhoEspecialidadesResponse::posicao));
+    }
+
+    private void ordenarDadosEspecialidades(List<TabelaEspecialidadesResponse> dadosEspecialidades) {
+        dadosEspecialidades.sort(Comparator.comparing(TabelaEspecialidadesResponse::posicao));
+    }
+
+    private void agregarDadosEspecialidades() {
+        for (int i = 0; i < cabecalhosEspecialidades.size(); i++) {
+            percorrerEspecialidade(i);
+        }
+    }
+
+    private void percorrerEspecialidade(int i) {
+        for (TabelaEspecialidadesResponse especialidade : dadosEspecialidades) {
+            validarSeEspecialidadePertenceAoCabecalho(i, especialidade);
+        }
+    }
+
+    private void validarSeEspecialidadePertenceAoCabecalho(int i, TabelaEspecialidadesResponse especialidade) {
+        if (especialidadePertenceAoCabecalho(i, especialidade)){
+            cabecalhosEspecialidades.get(i).especialidades().add(especialidade);
+        }
+    }
+
+    private boolean especialidadePertenceAoCabecalho(int i, TabelaEspecialidadesResponse especialidade) {
+        return ultimoLoopEspecialidade(i) && posicaoEspecialidadeMaiorQuePosicaoCabecalho(i, especialidade) ||
+                !ultimoLoopEspecialidade(i) && posicaoEspecialidadeMaiorQuePosicaoCabecalho(i, especialidade) && posicaoEspecialidadeMenorQueProximaPosicaoCabecalho(i, especialidade);
+    }
+
+    private boolean ultimoLoopEspecialidade(int i) {
+        return i == cabecalhosEspecialidades.size() - 1;
+    }
+
+    private boolean posicaoEspecialidadeMaiorQuePosicaoCabecalho(int i, TabelaEspecialidadesResponse especialidade) {
+        return especialidade.posicao() > cabecalhosEspecialidades.get(i).posicao();
+    }
+
+    private boolean posicaoEspecialidadeMenorQueProximaPosicaoCabecalho(int i, TabelaEspecialidadesResponse especialidade) {
+        return especialidade.posicao() < cabecalhosEspecialidades.get(i + 1).posicao();
     }
 
 }

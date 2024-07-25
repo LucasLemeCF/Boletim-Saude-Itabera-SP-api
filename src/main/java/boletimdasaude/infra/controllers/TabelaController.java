@@ -29,9 +29,9 @@ public class TabelaController {
         return ResponseEntity.ok().body("Tabela salva com sucesso");
     }
 
-    @GetMapping
+    @GetMapping(path = "/{data}")
     public ResponseEntity<TabelaResponse> buscarDadosTabela(
-            @RequestBody Date data
+            @PathVariable(value="data") String data
     ) {
         return ResponseEntity.ok().body(tabelaInteractor.buscarDadosTabela(data));
     }

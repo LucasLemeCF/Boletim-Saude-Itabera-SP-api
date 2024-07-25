@@ -2,15 +2,14 @@ package boletimdasaude.config.beans;
 
 import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRepository;
 import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
+import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaCirurgiaoRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaEspecialidadeRepository;
 import boletimdasaude.application.usecases.tabela.DadosCirurgiaoInteractor;
 import boletimdasaude.application.usecases.tabela.DadosEspecialidadeInteractor;
 import boletimdasaude.application.usecases.tabela.TabelaInteractor;
-import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
-import boletimdasaude.infra.gateways.procedimentocirurgiao.ProcedimentoCirurgiaoRepository;
+import boletimdasaude.infra.gateways.ordemtabela.LinhaTabelaRepository;
 import boletimdasaude.infra.gateways.especialidade.ResultadoMensalEspecialidadeRepository;
-import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.IResultadoMensalEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.entities.IResultadoDiarioEspecialidadeRepositoryJpa;
@@ -29,16 +28,18 @@ public class TabelaConfig {
     @Bean
     DadosEspecialidadeInteractor salvarDadosEspecialidadeInteractor(
                 ITabelaEspecialidadeRepository tabelaEspecialidadeRepository,
-                IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository
+                IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository,
+                IOrdemTabelaRepository ordemTabelaRepository
     ) {
-        return new DadosEspecialidadeInteractor(tabelaEspecialidadeRepository, resultadoMensalEspecialidadeRepository);
+        return new DadosEspecialidadeInteractor(tabelaEspecialidadeRepository, resultadoMensalEspecialidadeRepository, ordemTabelaRepository);
     }
 
     @Bean
     ResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepositoryJpa,
                                                                                   IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa,
-                                                                                  IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa) {
-        return new ResultadoMensalEspecialidadeRepository(especialidadeRepositoryJpa, resultadoMensalEspecialidadeRepositoryJpa, resultadoDiarioEspecialidadeRepositoryJpa);
+                                                                                  IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa,
+                                                                                  LinhaTabelaRepository linhaTabelaRepository) {
+        return new ResultadoMensalEspecialidadeRepository(especialidadeRepositoryJpa, resultadoMensalEspecialidadeRepositoryJpa, resultadoDiarioEspecialidadeRepositoryJpa, linhaTabelaRepository);
     }
 
     @Bean
@@ -48,8 +49,9 @@ public class TabelaConfig {
 
     @Bean
     DadosCirurgiaoInteractor salvarDadosCirurgiaoInteractor(ITabelaCirurgiaoRepository tabelaCirurgiaoRepository,
-                                                            IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository) {
-        return new DadosCirurgiaoInteractor(tabelaCirurgiaoRepository, resultadoMensalCirurgiaoRepository);
+                                                            IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository,
+                                                            IOrdemTabelaRepository ordemTabelaRepository) {
+        return new DadosCirurgiaoInteractor(tabelaCirurgiaoRepository, resultadoMensalCirurgiaoRepository, ordemTabelaRepository);
     }
 
 }
