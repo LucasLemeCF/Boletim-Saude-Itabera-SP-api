@@ -20,6 +20,10 @@ server:
     context-path: /api
     port: 8080
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
 ---
 
 spring:
