@@ -56,7 +56,8 @@ public class DadosCirurgiaoInteractor {
     private TabelaRequest montarTabelaRequestCirurgiao() {
         return new TabelaRequest(
                 this.tabelaRequest.data(),
-                separarDadosCirurgiao()
+                separarDadosCirurgiao(),
+                this.tabelaRequest.cabecalhos()
         );
     }
 

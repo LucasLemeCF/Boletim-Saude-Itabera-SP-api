@@ -41,15 +41,21 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
 
     @Override
     public OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela) {
-        desativaOrdensAnteriores();
+        OrdemTabelaEntity entityAntiga = repository.findByData(ordemTabela.data());
 
-        OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
-        entity = repository.saveAndFlush(entity);
+        if (entityAntiga != null) {
+            return OrdemTabelaEntityMapper.toDomain(repository.saveAndFlush(entityAntiga));
+        } else {
+            desativaOrdensAnteriores();
 
-        salvarLinhaTabela(entity);
-        salvarCabecalhoTabela(entity);
+            OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
+            entity = repository.saveAndFlush(entity);
 
-        return OrdemTabelaEntityMapper.toDomain(entity);
+            salvarLinhaTabela(entity);
+            salvarCabecalhoTabela(entity);
+
+            return OrdemTabelaEntityMapper.toDomain(entity);
+        }
     }
 
     private void desativaOrdensAnteriores() {
@@ -92,15 +98,8 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
 
     @Override
     public OrdemTabela buscarOrdemTabela(String data) {
-        List<OrdemTabelaEntity> ordemTabelaEntities = repository.findAll();
-
-        for (OrdemTabelaEntity ordemTabelaEntity : ordemTabelaEntities) {
-            if (ordemTabelaEntity.getData().equals(data)) {
-                return OrdemTabelaEntityMapper.toDomain(ordemTabelaEntity);
-            }
-        }
-
-        return null;
+        Optional<OrdemTabelaEntity> ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+        return ordemTabelaEntity.map(OrdemTabelaEntityMapper::toDomain).orElse(null);
     }
 
     @Override
@@ -129,7 +128,7 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
             List<OrdemTabelaEntity> ordemTabelaEntities = repository.findAll();
             for (OrdemTabelaEntity ordemTabela : ordemTabelaEntities) {
                 if (ordemTabela.isAtivo()) {
-                    return ordemTabelaEntity = Optional.of(ordemTabela);
+                    return Optional.of(ordemTabela);
                 }
             }
         }

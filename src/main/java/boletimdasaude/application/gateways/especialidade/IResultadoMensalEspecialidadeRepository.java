@@ -13,13 +13,13 @@ public interface IResultadoMensalEspecialidadeRepository {
 
     ResultadoMensalEspecialidade salvarDadosIniciaisDoMes(ResultadoMensalEspecialidade resultadoMensalEspecialidade, Long especialidadeId);
 
-    ResultadoMensalEspecialidade salvarDadosDoDia(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, Long especialidadeId, Date data);
+    ResultadoMensalEspecialidade salvarDadosDoDia(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, Long especialidadeId, String data);
 
-    boolean existeMesAnoEspecialidade(Date data, Long especialidadeId);
+    boolean existeMesAnoEspecialidade(String data, Long especialidadeId);
 
-    boolean existeDiaEspecialidade(Date data, Long resultadoMensalId);
+    boolean existeDiaEspecialidade(String data, Long resultadoMensalId);
 
-    ResultadoDiarioEspecialidade atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest);
+    ResultadoDiarioEspecialidade atualizarDadosDoDia(String data, LinhaTabelaRequest linhaTabelaRequest);
 
     List<TabelaEspecialidadesResponse> buscarDadosEspecialidades(String data);
 

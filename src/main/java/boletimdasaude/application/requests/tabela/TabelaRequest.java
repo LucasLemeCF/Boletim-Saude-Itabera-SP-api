@@ -1,10 +1,12 @@
 package boletimdasaude.application.requests.tabela;
 
-import java.util.Date;
+import boletimdasaude.application.requests.ordemtabela.CabecalhoOrdemTabelaRequest;
+
 import java.util.List;
 
 public record TabelaRequest(
-        Date data,
-        List<LinhaTabelaRequest> linhas
+        String data,
+        List<LinhaTabelaRequest> linhas,
+        List<CabecalhoOrdemTabelaRequest> cabecalhos
 ) {
 }

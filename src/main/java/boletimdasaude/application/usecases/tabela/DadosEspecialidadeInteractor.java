@@ -53,7 +53,8 @@ public class DadosEspecialidadeInteractor {
     private TabelaRequest montarTabelaRequestEspecialidade() {
         return new TabelaRequest(
                 this.tabelaRequest.data(),
-                separarDadosEspecialidade()
+                separarDadosEspecialidade(),
+                this.tabelaRequest.cabecalhos()
         );
     }
 
@@ -87,7 +88,7 @@ public class DadosEspecialidadeInteractor {
         }
     }
 
-    private boolean existeDadosParaOMes(Long especialidadeId, Date data) {
+    private boolean existeDadosParaOMes(Long especialidadeId, String data) {
        return resultadoMensalEspecialidadeRepository.existeMesAnoEspecialidade(data, especialidadeId);
     }
 

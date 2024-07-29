@@ -60,7 +60,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     }
 
     @Override
-    public ResultadoMensalEspecialidade salvarDadosDoDia(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, Long especialidadeId, Date data) {
+    public ResultadoMensalEspecialidade salvarDadosDoDia(ResultadoDiarioEspecialidade resultadoDiarioEspecialidade, Long especialidadeId, String data) {
         ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = ResultadoDiarioEspecialidadeMapper.toEntity(resultadoDiarioEspecialidade);
 
         this.dia = resultadoDiarioEspecialidade.dia();
@@ -87,7 +87,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         return atendimentos;
     }
 
-    private ResultadoDiarioEspecialidadeEntity buscarDiaEspecialidade(Date data, Long resultadoMensalId) {
+    private ResultadoDiarioEspecialidadeEntity buscarDiaEspecialidade(String data, Long resultadoMensalId) {
         ResultadoDiarioEspecialidadeEntity resultado = null;
 
         instanciaVariaveis(data);
@@ -145,7 +145,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         return resultadoDiarioEspecialidadeEntity.getDia() == dia;
     }
 
-    private ResultadoMensalEspecialidadeEntity buscarMesAnoEspecialidade(Date data, Long especialidadeId) {
+    private ResultadoMensalEspecialidadeEntity buscarMesAnoEspecialidade(String data, Long especialidadeId) {
         ResultadoMensalEspecialidadeEntity resultado = null;
 
         instanciaVariaveis(data);
@@ -164,17 +164,17 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     }
 
     @Override
-    public boolean existeMesAnoEspecialidade(Date data, Long especialidadeId) {
+    public boolean existeMesAnoEspecialidade(String data, Long especialidadeId) {
         return buscarMesAnoEspecialidade(data, especialidadeId) != null;
     }
 
     @Override
-    public boolean existeDiaEspecialidade(Date data, Long resultadoMensalId) {
+    public boolean existeDiaEspecialidade(String data, Long resultadoMensalId) {
         return buscarDiaEspecialidade(data, resultadoMensalId) != null;
     }
 
     @Override
-    public ResultadoDiarioEspecialidade atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest) {
+    public ResultadoDiarioEspecialidade atualizarDadosDoDia(String data, LinhaTabelaRequest linhaTabelaRequest) {
         ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = buscarDiaEspecialidade(data, linhaTabelaRequest.componenteId());
         resultadoDiarioEspecialidadeEntity.setAtendimentos(linhaTabelaRequest.pacientesAtendidos());
 

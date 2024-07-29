@@ -12,13 +12,13 @@ public interface IResultadoMensalCirurgiaoRepository {
 
     ResultadoMensalCirurgiao salvarDadosIniciaisDoMes(ResultadoMensalCirurgiao resultadoMensalCirurgiao, Long procedimentoId);
 
-    ResultadoMensalCirurgiao salvarDadosDoDia(ResultadoDiarioCirurgiao resultadoDiarioCirurgiao, Long cirurgiaoId, Date data);
+    ResultadoMensalCirurgiao salvarDadosDoDia(ResultadoDiarioCirurgiao resultadoDiarioCirurgiao, Long cirurgiaoId, String data);
 
-    boolean existeMesProcedimentoCirurgiao(Date data, Long cirurgiaoId);
+    boolean existeMesProcedimentoCirurgiao(String data, Long cirurgiaoId);
 
-    boolean existeDiaCirurgiao(Date data, Long resultadoMensalId);
+    boolean existeDiaCirurgiao(String data, Long resultadoMensalId);
 
-    ResultadoDiarioCirurgiao atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest);
+    ResultadoDiarioCirurgiao atualizarDadosDoDia(String data, LinhaTabelaRequest linhaTabelaRequest);
 
     List<TabelaCirurgioesResponse> buscarDadosCirurgioes(String data);
 

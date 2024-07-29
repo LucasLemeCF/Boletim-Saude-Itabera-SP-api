@@ -60,7 +60,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
     }
 
     @Override
-    public ResultadoMensalCirurgiao salvarDadosDoDia(ResultadoDiarioCirurgiao resultadoDiarioCirurgiao, Long procedimentoId, Date data) {
+    public ResultadoMensalCirurgiao salvarDadosDoDia(ResultadoDiarioCirurgiao resultadoDiarioCirurgiao, Long procedimentoId, String data) {
         ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity = buscarMesAnoProcedimentoCirurgiao(data, procedimentoId);
         ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity = ResultadoDiarioCirurgiaoMapper.toEntity(resultadoDiarioCirurgiao);
         resultadoDiarioCirurgiaoEntity.setResultadoMensalCirurgiao(resultadoMensalCirurgiaoEntity);
@@ -82,7 +82,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         return atendimentos;
     }
 
-    private ResultadoDiarioCirurgiaoEntity buscarDiaCirurgiao(Date data, Long resultadoMensalId) {
+    private ResultadoDiarioCirurgiaoEntity buscarDiaCirurgiao(String data, Long resultadoMensalId) {
         ResultadoDiarioCirurgiaoEntity resultado = null;
 
         instanciaVariaveis(data);
@@ -96,18 +96,11 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         return resultado;
     }
 
-    private void instanciaVariaveis(Date data) {
-        this.dia = ConverterData.toDia(data);
-        this.mes = ConverterData.toMes(data);
-        this.ano = ConverterData.toAno(data);
-    }
-
     private void instanciaVariaveis(String data) {
         this.dia = ConverterData.toDia(data);
         this.mes = ConverterData.toMes(data);
         this.ano = ConverterData.toAno(data);
     }
-
 
     private ResultadoDiarioCirurgiaoEntity percorrerResultadosMensal(ProcedimentoCirurgiaoEntity procedimentoCirurgiaoEntity) {
         ResultadoDiarioCirurgiaoEntity resultado = null;
@@ -141,7 +134,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         return resultadoDiarioCirurgiaoEntity.getDia() == dia;
     }
 
-    public ResultadoMensalCirurgiaoEntity buscarMesAnoProcedimentoCirurgiao(Date data, Long procedimentoId) {
+    public ResultadoMensalCirurgiaoEntity buscarMesAnoProcedimentoCirurgiao(String data, Long procedimentoId) {
         ResultadoMensalCirurgiaoEntity resultado = null;
 
         Optional<ProcedimentoCirurgiaoEntity> procedimentoCirurgiaoEntity = procedimentoCirurgiaoRepositoryJpa.findById(procedimentoId);
@@ -161,17 +154,17 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
     }
 
     @Override
-    public boolean existeMesProcedimentoCirurgiao(Date data, Long resultadoMensalId) {
+    public boolean existeMesProcedimentoCirurgiao(String data, Long resultadoMensalId) {
         return buscarMesAnoProcedimentoCirurgiao(data, resultadoMensalId) != null;
     }
 
     @Override
-    public boolean existeDiaCirurgiao(Date data, Long resultadoMensalId) {
+    public boolean existeDiaCirurgiao(String data, Long resultadoMensalId) {
         return buscarDiaCirurgiao(data, resultadoMensalId) != null;
     }
 
     @Override
-    public ResultadoDiarioCirurgiao atualizarDadosDoDia(Date data, LinhaTabelaRequest linhaTabelaRequest) {
+    public ResultadoDiarioCirurgiao atualizarDadosDoDia(String data, LinhaTabelaRequest linhaTabelaRequest) {
         ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity = buscarDiaCirurgiao(data, linhaTabelaRequest.componenteId());
         resultadoDiarioCirurgiaoEntity.setAtendimentos(linhaTabelaRequest.pacientesAtendidos());
 
