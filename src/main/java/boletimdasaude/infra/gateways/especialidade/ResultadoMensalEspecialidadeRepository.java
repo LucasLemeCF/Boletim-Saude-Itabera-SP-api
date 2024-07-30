@@ -1,12 +1,17 @@
 package boletimdasaude.infra.gateways.especialidade;
 
+import boletimdasaude.application.gateways.especialidade.IEspecialidadeRepository;
 import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
+import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
 import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.config.exceptions.NotFoundException;
+import boletimdasaude.domain.enums.TipoLinha;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
+import boletimdasaude.domain.ordemtabela.LinhaTabela;
+import boletimdasaude.domain.ordemtabela.OrdemTabela;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoDiarioEspecialidadeMapper;
 import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
 import boletimdasaude.infra.gateways.ordemtabela.LinhaTabelaRepository;
@@ -18,8 +23,8 @@ import boletimdasaude.infra.persitence.especialidade.entities.ResultadoDiarioEsp
 import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalEspecialidadeRepository {
@@ -27,20 +32,27 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     private int dia;
     private int mes;
     private int ano;
+    private String data;
 
     private final IEspecialidadeRepositoryJpa especialidadeRepositoryJpa;
     private final IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa;
     private final IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa;
     private final LinhaTabelaRepository linhaTabelaRepository;
+    private final IOrdemTabelaRepository tabelaRepository;
+    private final IEspecialidadeRepository especialidadeRepository;
 
     public ResultadoMensalEspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepositoryJpa,
                                                   IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa,
                                                   IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa,
-                                                  LinhaTabelaRepository linhaTabelaRepository) {
+                                                  LinhaTabelaRepository linhaTabelaRepository,
+                                                  IOrdemTabelaRepository tabelaRepository,
+                                                  IEspecialidadeRepository especialidadeRepository) {
         this.especialidadeRepositoryJpa = especialidadeRepositoryJpa;
         this.resultadoMensalEspecialidadeRepositoryJpa = resultadoMensalEspecialidadeRepositoryJpa;
         this.resultadoDiarioEspecialidadeRepositoryJpa = resultadoDiarioEspecialidadeRepositoryJpa;
         this.linhaTabelaRepository = linhaTabelaRepository;
+        this.tabelaRepository = tabelaRepository;
+        this.especialidadeRepository = especialidadeRepository;
     }
 
     @Override
@@ -101,16 +113,11 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         return resultado;
     }
 
-    private void instanciaVariaveis(Date data) {
-        this.dia = ConverterData.toDia(data);
-        this.mes = ConverterData.toMes(data);
-        this.ano = ConverterData.toAno(data);
-    }
-
     private void instanciaVariaveis(String data) {
         this.dia = ConverterData.toDia(data);
         this.mes = ConverterData.toMes(data);
         this.ano = ConverterData.toAno(data);
+        this.data = data;
     }
 
     private ResultadoDiarioEspecialidadeEntity percorrerResultadosMensal(EspecialidadeEntity especialidadeEntity) {
@@ -196,7 +203,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal = resultadoMensalEspecialidadeRepositoryJpa.findByMesAndAno(mes, ano);
         List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario = buscarResultadoDiarioEspecialidade(listaResultadoMensal);
 
-        montarTabelaEspecialidades(tabelaEspecialidadesResponses, listaResultadoDiario);
+        montarTabelaEspecialidades(tabelaEspecialidadesResponses, listaResultadoDiario, listaResultadoMensal);
 
         return tabelaEspecialidadesResponses;
     }
@@ -215,22 +222,87 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         return listaResultadoDiario;
     }
 
-    private void montarTabelaEspecialidades(List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses, List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario) {
-        for (ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity : listaResultadoDiario) {
-            Long posicao = linhaTabelaRepository.buscarPosicaoEspecialidade(resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId());
+    private void montarTabelaEspecialidades(List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses, List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario, List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal) {
+        OrdemTabela ordemTabela = tabelaRepository.buscarOrdemTabela(data);
+        List<LinhaTabela> ordemTabelaEspecialidade = separarOrdemTabelaEspecialidade(ordemTabela);
 
-            TabelaEspecialidadesResponse tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
-                    posicao,
-                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId(),
-                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getEspecialidade(),
-                    resultadoDiarioEspecialidadeEntity.getAtendimentos(),
-                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaDiaria(),
-                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getAtendimentos(),
-                    resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaMensal()
-            );
+        for (LinhaTabela linha : ordemTabelaEspecialidade) {
+            TabelaEspecialidadesResponse tabelaEspecialidadesResponse = null;
+
+            ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = buscarResultadoDiarioEspecialidade(listaResultadoDiario, linha);
+            ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = buscarResultadoMensalEspecialidade(listaResultadoMensal, linha);
+
+            if (resultadoDiarioEspecialidadeEntity != null){
+                tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
+                        linha.posicao(),
+                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId(),
+                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getEspecialidade(),
+                        resultadoDiarioEspecialidadeEntity.getAtendimentos(),
+                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaDiaria(),
+                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getAtendimentos(),
+                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaMensal()
+                );
+            } else if (resultadoMensalEspecialidadeEntity == null) {
+                tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
+                        linha.posicao(),
+                        linha.componenteId(),
+                        especialidadeRepository.buscarEspecialidade(linha.componenteId()).get().especialidade(),
+                        0,
+                        0,
+                        0,
+                        0
+                );
+            } else {
+                tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
+                        linha.posicao(),
+                        linha.componenteId(),
+                        resultadoMensalEspecialidadeEntity.getEspecialidade().getEspecialidade(),
+                        0,
+                        resultadoMensalEspecialidadeEntity.getMetaDiaria(),
+                        resultadoMensalEspecialidadeEntity.getAtendimentos(),
+                        resultadoMensalEspecialidadeEntity.getMetaMensal()
+                );
+            }
 
             tabelaEspecialidadesResponses.add(tabelaEspecialidadesResponse);
         }
+
+    }
+
+    private List<LinhaTabela> separarOrdemTabelaEspecialidade(OrdemTabela request) {
+        List<LinhaTabela> response = new ArrayList<>();
+
+        for (LinhaTabela linha : request.linhasTabela()) {
+            if (linha.tipo().equals(TipoLinha.ESPECIALIDADE_LINHA)) {
+                response.add(linha);
+            }
+        }
+
+        return response;
+    }
+
+    private ResultadoDiarioEspecialidadeEntity buscarResultadoDiarioEspecialidade(List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario, LinhaTabela linha) {
+        ResultadoDiarioEspecialidadeEntity resultado = null;
+
+        for (ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity : listaResultadoDiario) {
+           if (Objects.equals(linha.componenteId(), resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId())) {
+               resultado = resultadoDiarioEspecialidadeEntity;
+           }
+        }
+
+        return resultado;
+    }
+
+    private ResultadoMensalEspecialidadeEntity buscarResultadoMensalEspecialidade(List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal, LinhaTabela linha) {
+        ResultadoMensalEspecialidadeEntity resultado = null;
+
+        for (ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity : listaResultadoMensal) {
+            if (Objects.equals(linha.componenteId(), resultadoMensalEspecialidadeEntity.getEspecialidade().getId())) {
+                resultado = resultadoMensalEspecialidadeEntity;
+            }
+        }
+
+        return resultado;
     }
 
 }

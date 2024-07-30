@@ -1,6 +1,7 @@
 package boletimdasaude.config.beans;
 
 import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRepository;
+import boletimdasaude.application.gateways.especialidade.IEspecialidadeRepository;
 import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
 import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaCirurgiaoRepository;
@@ -42,8 +43,10 @@ public class TabelaConfig {
     ResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepositoryJpa,
                                                                                   IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa,
                                                                                   IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa,
-                                                                                  LinhaTabelaRepository linhaTabelaRepository) {
-        return new ResultadoMensalEspecialidadeRepository(especialidadeRepositoryJpa, resultadoMensalEspecialidadeRepositoryJpa, resultadoDiarioEspecialidadeRepositoryJpa, linhaTabelaRepository);
+                                                                                  LinhaTabelaRepository linhaTabelaRepository,
+                                                                                  IOrdemTabelaRepository tabelaRepository,
+                                                                                  IEspecialidadeRepository especialidadeRepository) {
+        return new ResultadoMensalEspecialidadeRepository(especialidadeRepositoryJpa, resultadoMensalEspecialidadeRepositoryJpa, resultadoDiarioEspecialidadeRepositoryJpa, linhaTabelaRepository, tabelaRepository, especialidadeRepository);
     }
 
     @Bean
