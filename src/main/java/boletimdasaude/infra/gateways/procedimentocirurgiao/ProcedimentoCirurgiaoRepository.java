@@ -3,7 +3,6 @@ package boletimdasaude.infra.gateways.procedimentocirurgiao;
 import boletimdasaude.application.gateways.procedimentocirurgiao.IProcedimentoCirurgiaoRepository;
 import boletimdasaude.application.gateways.tabela.ITabelaCirurgiaoRepository;
 import boletimdasaude.config.exceptions.NotFoundException;
-import boletimdasaude.domain.cirurgiao.Cirurgiao;
 import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
 import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
@@ -19,12 +18,11 @@ public class ProcedimentoCirurgiaoRepository implements IProcedimentoCirurgiaoRe
 
     private final IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa;
     private final CirurgiaoRepository cirurgiaoRepository;
-    private final ProcedimentoCirurgiaoEntityMapper procedimentoCirurgiaoEntityMapper;
 
-    public ProcedimentoCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa, CirurgiaoRepository cirurgiaoRepository, ProcedimentoCirurgiaoEntityMapper procedimentoCirurgiaoEntityMapper) {
+    public ProcedimentoCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa,
+                                           CirurgiaoRepository cirurgiaoRepository) {
         this.procedimentoCirurgiaoRepositoryJpa = procedimentoCirurgiaoRepositoryJpa;
         this.cirurgiaoRepository = cirurgiaoRepository;
-        this.procedimentoCirurgiaoEntityMapper = procedimentoCirurgiaoEntityMapper;
     }
 
     @Override
@@ -45,6 +43,11 @@ public class ProcedimentoCirurgiaoRepository implements IProcedimentoCirurgiaoRe
     @Override
     public Optional<ProcedimentoCirurgiao> buscarProcedimentoCirurgiao(Long procedimentoId) {
         return ProcedimentoCirurgiaoEntityMapper.toDomainOptional(procedimentoCirurgiaoRepositoryJpa.findById(procedimentoId).get());
+    }
+
+    @Override
+    public Optional<ProcedimentoCirurgiaoEntity> buscarProcedimentoCirurgiaoEntity(Long procedimentoId) {
+        return procedimentoCirurgiaoRepositoryJpa.findById(procedimentoId);
     }
 
     @Override

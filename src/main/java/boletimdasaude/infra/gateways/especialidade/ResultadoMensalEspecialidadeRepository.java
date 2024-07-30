@@ -8,6 +8,7 @@ import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.config.exceptions.NotFoundException;
 import boletimdasaude.domain.enums.TipoLinha;
+import boletimdasaude.domain.especialidade.Especialidade;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 import boletimdasaude.domain.ordemtabela.LinhaTabela;
@@ -37,20 +38,17 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
     private final IEspecialidadeRepositoryJpa especialidadeRepositoryJpa;
     private final IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa;
     private final IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa;
-    private final LinhaTabelaRepository linhaTabelaRepository;
     private final IOrdemTabelaRepository tabelaRepository;
     private final IEspecialidadeRepository especialidadeRepository;
 
     public ResultadoMensalEspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepositoryJpa,
                                                   IResultadoMensalEspecialidadeRepositoryJpa resultadoMensalEspecialidadeRepositoryJpa,
                                                   IResultadoDiarioEspecialidadeRepositoryJpa resultadoDiarioEspecialidadeRepositoryJpa,
-                                                  LinhaTabelaRepository linhaTabelaRepository,
                                                   IOrdemTabelaRepository tabelaRepository,
                                                   IEspecialidadeRepository especialidadeRepository) {
         this.especialidadeRepositoryJpa = especialidadeRepositoryJpa;
         this.resultadoMensalEspecialidadeRepositoryJpa = resultadoMensalEspecialidadeRepositoryJpa;
         this.resultadoDiarioEspecialidadeRepositoryJpa = resultadoDiarioEspecialidadeRepositoryJpa;
-        this.linhaTabelaRepository = linhaTabelaRepository;
         this.tabelaRepository = tabelaRepository;
         this.especialidadeRepository = especialidadeRepository;
     }
@@ -227,41 +225,17 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         List<LinhaTabela> ordemTabelaEspecialidade = separarOrdemTabelaEspecialidade(ordemTabela);
 
         for (LinhaTabela linha : ordemTabelaEspecialidade) {
-            TabelaEspecialidadesResponse tabelaEspecialidadesResponse = null;
+            TabelaEspecialidadesResponse tabelaEspecialidadesResponse;
 
             ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = buscarResultadoDiarioEspecialidade(listaResultadoDiario, linha);
             ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = buscarResultadoMensalEspecialidade(listaResultadoMensal, linha);
 
             if (resultadoDiarioEspecialidadeEntity != null){
-                tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
-                        linha.posicao(),
-                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getId(),
-                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getEspecialidade().getEspecialidade(),
-                        resultadoDiarioEspecialidadeEntity.getAtendimentos(),
-                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaDiaria(),
-                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getAtendimentos(),
-                        resultadoDiarioEspecialidadeEntity.getResultadoMensal().getMetaMensal()
-                );
+                tabelaEspecialidadesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioEspecialidadeEntity);
             } else if (resultadoMensalEspecialidadeEntity == null) {
-                tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
-                        linha.posicao(),
-                        linha.componenteId(),
-                        especialidadeRepository.buscarEspecialidade(linha.componenteId()).get().especialidade(),
-                        0,
-                        0,
-                        0,
-                        0
-                );
+                tabelaEspecialidadesResponse = montarTabelaSemDadosParaODIa(linha);
             } else {
-                tabelaEspecialidadesResponse = new TabelaEspecialidadesResponse(
-                        linha.posicao(),
-                        linha.componenteId(),
-                        resultadoMensalEspecialidadeEntity.getEspecialidade().getEspecialidade(),
-                        0,
-                        resultadoMensalEspecialidadeEntity.getMetaDiaria(),
-                        resultadoMensalEspecialidadeEntity.getAtendimentos(),
-                        resultadoMensalEspecialidadeEntity.getMetaMensal()
-                );
+                tabelaEspecialidadesResponse = montarTabelaSemDadosParaOMes(linha, resultadoMensalEspecialidadeEntity);
             }
 
             tabelaEspecialidadesResponses.add(tabelaEspecialidadesResponse);
@@ -303,6 +277,47 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         }
 
         return resultado;
+    }
+
+    private TabelaEspecialidadesResponse montarTabelaDadosExistentes(LinhaTabela linha, ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidade) {
+        return new TabelaEspecialidadesResponse(
+                linha.posicao(),
+                resultadoDiarioEspecialidade.getResultadoMensal().getEspecialidade().getId(),
+                resultadoDiarioEspecialidade.getResultadoMensal().getEspecialidade().getEspecialidade(),
+                resultadoDiarioEspecialidade.getAtendimentos(),
+                resultadoDiarioEspecialidade.getResultadoMensal().getMetaDiaria(),
+                resultadoDiarioEspecialidade.getResultadoMensal().getAtendimentos(),
+                resultadoDiarioEspecialidade.getResultadoMensal().getMetaMensal()
+        );
+    }
+
+    private TabelaEspecialidadesResponse montarTabelaSemDadosParaODIa(LinhaTabela linha) {
+        return new TabelaEspecialidadesResponse(
+                linha.posicao(),
+                linha.componenteId(),
+                buscarEspecialidadePorId(linha.componenteId()),
+                0,
+                0,
+                0,
+                0
+        );
+    }
+
+    private TabelaEspecialidadesResponse montarTabelaSemDadosParaOMes(LinhaTabela linha, ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidade) {
+        return new TabelaEspecialidadesResponse(
+                linha.posicao(),
+                linha.componenteId(),
+                resultadoMensalEspecialidade.getEspecialidade().getEspecialidade(),
+                0,
+                resultadoMensalEspecialidade.getMetaDiaria(),
+                resultadoMensalEspecialidade.getAtendimentos(),
+                resultadoMensalEspecialidade.getMetaMensal()
+        );
+    }
+
+    private String buscarEspecialidadePorId(Long especialidadeId) {
+        Optional<Especialidade> especialidade = especialidadeRepository.buscarEspecialidade(especialidadeId);
+        return especialidade.isPresent() ? especialidade.get().especialidade() : "";
     }
 
 }

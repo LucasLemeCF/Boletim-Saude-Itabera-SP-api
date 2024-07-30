@@ -25,9 +25,8 @@ public class ProcedimentoCirurgiaoConfig {
 
     @Bean
     ProcedimentoCirurgiaoRepository procedimentoCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa,
-                                                                    CirurgiaoRepository cirurgiaoRepository,
-                                                                    ProcedimentoCirurgiaoEntityMapper procedimentoCirurgiaoEntityMapper) {
-        return new ProcedimentoCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, cirurgiaoRepository, procedimentoCirurgiaoEntityMapper);
+                                                                    CirurgiaoRepository cirurgiaoRepository) {
+        return new ProcedimentoCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, cirurgiaoRepository);
     }
 
     @Bean
