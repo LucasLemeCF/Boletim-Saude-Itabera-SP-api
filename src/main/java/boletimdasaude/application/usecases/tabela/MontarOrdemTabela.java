@@ -39,7 +39,7 @@ public class MontarOrdemTabela {
                 CabecalhoOrdemTabelaMapper.toDomainList(editarOrdemTabelaRequest.cabecalhos())
         );
 
-        editarTabelaInteractor.editarOrdemTabela(ordemTabela);
+        editarTabelaInteractor.adicionarOrdemTabela(ordemTabela);
     }
 
     private List<LinhaOrdemTabelaRequest> montarLinhas(List<LinhaTabelaRequest> linhas) {

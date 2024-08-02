@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface IOrdemTabelaRepository {
 
+    OrdemTabela adicionarOrdemTabela(OrdemTabela ordemTabela);
+
     OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela);
 
     OrdemTabela buscarOrdemTabela(String data);

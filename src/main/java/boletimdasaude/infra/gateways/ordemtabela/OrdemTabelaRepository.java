@@ -40,11 +40,28 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
     }
 
     @Override
+    public OrdemTabela adicionarOrdemTabela(OrdemTabela ordemTabela) {
+        OrdemTabelaEntity entityAntiga = repository.findByData(ordemTabela.data());
+
+        if (entityAntiga != null) {
+            return ordemTabela;
+        } else {
+            OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
+            entity = repository.saveAndFlush(entity);
+
+            salvarLinhaTabela(entity);
+            salvarCabecalhoTabela(entity);
+
+            return OrdemTabelaEntityMapper.toDomain(entity);
+        }
+    }
+
+    @Override
     public OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela) {
         OrdemTabelaEntity entityAntiga = repository.findByData(ordemTabela.data());
 
         if (entityAntiga != null) {
-            return OrdemTabelaEntityMapper.toDomain(repository.saveAndFlush(entityAntiga));
+            return ordemTabela;
         } else {
             desativaOrdensAnteriores();
 

@@ -11,6 +11,10 @@ public class EditarOrdemTabelaInteractor {
         this.tabelaRepository = tabelaRepository;
     }
 
+    public OrdemTabela adicionarOrdemTabela(OrdemTabela ordemTabela) {
+        return tabelaRepository.adicionarOrdemTabela(ordemTabela);
+    }
+
     public OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela) {
         return tabelaRepository.editarOrdemTabela(ordemTabela);
     }
