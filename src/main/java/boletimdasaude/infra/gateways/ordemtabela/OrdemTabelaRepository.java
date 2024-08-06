@@ -8,14 +8,8 @@ import boletimdasaude.domain.enums.TipoLinha;
 import boletimdasaude.domain.ordemtabela.OrdemTabela;
 import boletimdasaude.infra.gateways.ordemtabela.mappers.OrdemTabelaEntityMapper;
 import boletimdasaude.infra.gateways.ordemtabela.mappers.TextoCabecalhoTabelaEntityMapper;
-import boletimdasaude.infra.persitence.ordemtabela.ICabecalhoTabelaRepositoryJpa;
-import boletimdasaude.infra.persitence.ordemtabela.ILinhaTabelaRepositoryJpa;
-import boletimdasaude.infra.persitence.ordemtabela.IOrdemTabelaRepositoryJpa;
-import boletimdasaude.infra.persitence.ordemtabela.ITextoCabecalhoTabelaRepositoryJpa;
-import boletimdasaude.infra.persitence.ordemtabela.entities.CabecalhoTabelaEntity;
-import boletimdasaude.infra.persitence.ordemtabela.entities.LinhaTabelaEntity;
-import boletimdasaude.infra.persitence.ordemtabela.entities.OrdemTabelaEntity;
-import boletimdasaude.infra.persitence.ordemtabela.entities.TextoCabecalhoTabelaEntity;
+import boletimdasaude.infra.persitence.ordemtabela.*;
+import boletimdasaude.infra.persitence.ordemtabela.entities.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,51 +22,50 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
     private final ICabecalhoTabelaRepositoryJpa cabecalhoTabelaRepository;
     private final ITextoCabecalhoTabelaRepositoryJpa textoCabecalhoTabelaRepository;
     private final OrdemTabelaEntityMapper ordemTabelaEntityMapper;
+    private final IDataOrdemTabelaRepositoryJpa dataOrdemTabelaRepository;
 
     public OrdemTabelaRepository(IOrdemTabelaRepositoryJpa repository, ILinhaTabelaRepositoryJpa itemEspecialidadeRepository,
                                  ICabecalhoTabelaRepositoryJpa itemCirurgiaoRepository, ITextoCabecalhoTabelaRepositoryJpa textoCabecalhoTabelaRepository,
-                                 OrdemTabelaEntityMapper ordemTabelaEntityMapper) {
+                                 OrdemTabelaEntityMapper ordemTabelaEntityMapper,
+                                 IDataOrdemTabelaRepositoryJpa dataOrdemTabelaRepository) {
         this.repository = repository;
         this.linhaTabelaRepository = itemEspecialidadeRepository;
         this.cabecalhoTabelaRepository = itemCirurgiaoRepository;
         this.textoCabecalhoTabelaRepository = textoCabecalhoTabelaRepository;
         this.ordemTabelaEntityMapper = ordemTabelaEntityMapper;
+        this.dataOrdemTabelaRepository = dataOrdemTabelaRepository;
     }
 
     @Override
     public OrdemTabela adicionarOrdemTabela(OrdemTabela ordemTabela) {
-        OrdemTabelaEntity entityAntiga = repository.findByData(ordemTabela.data());
+        String dataAtual = ordemTabela.datas().get(0).data();
+        DataOrdemTabelaEntity dataEntity = dataOrdemTabelaRepository.findAll().stream()
+                .filter(data -> data.getData().equals(dataAtual))
+                .findFirst()
+                .orElse(null);
 
-        if (entityAntiga != null) {
-            return ordemTabela;
-        } else {
-            OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
-            entity = repository.saveAndFlush(entity);
-
-            salvarLinhaTabela(entity);
-            salvarCabecalhoTabela(entity);
-
-            return OrdemTabelaEntityMapper.toDomain(entity);
+        if (dataEntity == null) {
+            DataOrdemTabelaEntity dataAtualEntity = new DataOrdemTabelaEntity(dataAtual);
+            OrdemTabelaEntity entity = repository.findByAtivo(true);
+            dataAtualEntity.setOrdemTabela(entity);
+            dataOrdemTabelaRepository.saveAndFlush(dataAtualEntity);
         }
+
+        return ordemTabela;
     }
 
     @Override
     public OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela) {
-        OrdemTabelaEntity entityAntiga = repository.findByData(ordemTabela.data());
+        desativaOrdensAnteriores();
 
-        if (entityAntiga != null) {
-            return ordemTabela;
-        } else {
-            desativaOrdensAnteriores();
+        OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
+        entity = repository.saveAndFlush(entity);
 
-            OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
-            entity = repository.saveAndFlush(entity);
+        salvarDatasOrdemTabela(entity);
+        salvarLinhaTabela(entity);
+        salvarCabecalhoTabela(entity);
 
-            salvarLinhaTabela(entity);
-            salvarCabecalhoTabela(entity);
-
-            return OrdemTabelaEntityMapper.toDomain(entity);
-        }
+        return OrdemTabelaEntityMapper.toDomain(entity);
     }
 
     private void desativaOrdensAnteriores() {
@@ -84,6 +77,14 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
                 repository.saveAndFlush(ordem);
             }
         }
+    }
+
+    private void salvarDatasOrdemTabela(OrdemTabelaEntity entity) {
+        List<DataOrdemTabelaEntity> datas = entity.getDatas();
+
+        datas.forEach(data -> data.setOrdemTabela(entity));
+
+        dataOrdemTabelaRepository.saveAllAndFlush(datas);
     }
 
     private void salvarLinhaTabela(OrdemTabelaEntity entity) {
@@ -115,17 +116,17 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
 
     @Override
     public OrdemTabela buscarOrdemTabela(String data) {
-        Optional<OrdemTabelaEntity> ordemTabelaEntity = buscarOrdemTabelaEntity(data);
-        return ordemTabelaEntity.map(OrdemTabelaEntityMapper::toDomain).orElse(null);
+        OrdemTabelaEntity ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+        return OrdemTabelaEntityMapper.toDomain(ordemTabelaEntity);
     }
 
     @Override
     public List<TabelaCabecalhoEspecialidadesResponse> buscarCabecalhosEspecialidades(String data) {
         List<TabelaCabecalhoEspecialidadesResponse> cabecalhos = new ArrayList<>();
 
-        Optional<OrdemTabelaEntity> ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+       OrdemTabelaEntity ordemTabelaEntity = buscarOrdemTabelaEntity(data);
 
-        for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.get().getCabecalhosTabelaEntity()) {
+        for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.getCabecalhosTabelaEntity()) {
             if (cabecalho.getTipo().equals(TipoLinha.ESPECIALIDADE_CABECALHO)) {
                 cabecalhos.add(new TabelaCabecalhoEspecialidadesResponse(
                     cabecalho.getPosicao(),
@@ -138,28 +139,33 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
         return cabecalhos;
     }
 
-    private Optional<OrdemTabelaEntity> buscarOrdemTabelaEntity(String data) {
-        Optional<OrdemTabelaEntity> ordemTabelaEntity = Optional.ofNullable(repository.findByData(data));
+    private OrdemTabelaEntity buscarOrdemTabelaEntity(String dataAtual) {
+        DataOrdemTabelaEntity dataEntity = dataOrdemTabelaRepository.findAll().stream()
+                .filter(data -> data.getData().equals(dataAtual))
+                .findFirst()
+                .orElse(null);
 
-        if (ordemTabelaEntity.isEmpty()) {
+        if (dataEntity == null) {
             List<OrdemTabelaEntity> ordemTabelaEntities = repository.findAll();
             for (OrdemTabelaEntity ordemTabela : ordemTabelaEntities) {
                 if (ordemTabela.isAtivo()) {
-                    return Optional.of(ordemTabela);
+                    return ordemTabela;
                 }
             }
+        } else {
+            return dataEntity.getOrdemTabela();
         }
 
-        return ordemTabelaEntity;
+       return null;
     }
 
     @Override
     public List<TabelaCabecalhoCirurgioesResponse> buscarCabecalhosCirurgioes(String data) {
         List<TabelaCabecalhoCirurgioesResponse> cabecalhos = new ArrayList<>();
 
-        Optional<OrdemTabelaEntity> ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+        OrdemTabelaEntity ordemTabelaEntity = buscarOrdemTabelaEntity(data);
 
-        for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.get().getCabecalhosTabelaEntity()) {
+        for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.getCabecalhosTabelaEntity()) {
             if (cabecalho.getTipo().equals(TipoLinha.CIRURGIAO_CABECALHO)) {
                 cabecalhos.add(new TabelaCabecalhoCirurgioesResponse(
                         cabecalho.getPosicao(),

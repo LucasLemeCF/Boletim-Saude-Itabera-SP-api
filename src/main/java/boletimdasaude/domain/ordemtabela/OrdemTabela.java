@@ -4,7 +4,7 @@ import java.util.List;
 
 public record OrdemTabela(
         Long id,
-        String data,
+        List<DataOrdemTabela> datas,
         boolean ativo,
         List<LinhaTabela> linhasTabela,
         List<CabecalhoTabela> cabecalhosTabela

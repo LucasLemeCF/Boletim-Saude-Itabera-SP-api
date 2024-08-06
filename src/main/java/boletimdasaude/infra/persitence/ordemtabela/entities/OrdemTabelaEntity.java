@@ -13,8 +13,8 @@ public class OrdemTabelaEntity {
     @Column(name = "ID_ORDEM_TABELA")
     private Long id;
 
-    @Column(name = "DATA")
-    private String data;
+    @OneToMany(mappedBy = "ordemTabela", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DataOrdemTabelaEntity> datas;
 
     @Column(name = "ATIVO")
     private boolean ativo;
@@ -25,16 +25,16 @@ public class OrdemTabelaEntity {
     @OneToMany(mappedBy = "ordemTabela", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CabecalhoTabelaEntity> cabecalhosTabelaEntity;
 
-    public OrdemTabelaEntity(Long id, String data, boolean ativo, List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
+    public OrdemTabelaEntity(Long id, List<DataOrdemTabelaEntity> datas, boolean ativo, List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
         this.id = id;
-        this.data = data;
+        this.datas = datas;
         this.ativo = ativo;
         this.linhasTabelaEntity = linhasTabelaEntity;
         this.cabecalhosTabelaEntity = cabecalhosTabelaEntity;
     }
 
-    public OrdemTabelaEntity(String data, boolean ativo, List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
-        this.data = data;
+    public OrdemTabelaEntity(List<DataOrdemTabelaEntity> datas, boolean ativo, List<LinhaTabelaEntity> linhasTabelaEntity, List<CabecalhoTabelaEntity> cabecalhosTabelaEntity) {
+        this.datas = datas;
         this.ativo = ativo;
         this.linhasTabelaEntity = linhasTabelaEntity;
         this.cabecalhosTabelaEntity = cabecalhosTabelaEntity;
@@ -50,12 +50,12 @@ public class OrdemTabelaEntity {
         this.id = id;
     }
 
-    public String getData() {
-        return data;
+    public List<DataOrdemTabelaEntity> getDatas() {
+        return datas;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setDatas(List<DataOrdemTabelaEntity> data) {
+        this.datas = data;
     }
 
     public boolean isAtivo() {

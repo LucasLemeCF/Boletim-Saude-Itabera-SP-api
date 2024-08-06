@@ -10,6 +10,7 @@ import boletimdasaude.application.requests.ordemtabela.TextoCabecalhoOrdemTabela
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
 import boletimdasaude.application.requests.tabela.TabelaRequest;
 import boletimdasaude.application.usecases.ordemtabela.EditarOrdemTabelaInteractor;
+import boletimdasaude.domain.ordemtabela.DataOrdemTabela;
 import boletimdasaude.domain.ordemtabela.OrdemTabela;
 import boletimdasaude.domain.enums.TipoLinha;
 
@@ -31,9 +32,12 @@ public class MontarOrdemTabela {
                 request.cabecalhos()
         );
 
+        List<DataOrdemTabela> datas = new ArrayList<>();
+        datas.add(new DataOrdemTabela(null, request.data()));
+
         OrdemTabela ordemTabela = new OrdemTabela(
                 null,
-                editarOrdemTabelaRequest.data(),
+                datas,
                 false,
                 LinhaOrdemTabelaMapper.toDomainList(editarOrdemTabelaRequest.linhas()),
                 CabecalhoOrdemTabelaMapper.toDomainList(editarOrdemTabelaRequest.cabecalhos())

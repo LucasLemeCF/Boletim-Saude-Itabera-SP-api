@@ -1,6 +1,5 @@
 package boletimdasaude.infra.controllers;
 
-import boletimdasaude.application.responses.tabela.TabelaResponse;
 import boletimdasaude.application.usecases.ordemtabela.EditarOrdemTabelaInteractor;
 import boletimdasaude.domain.ordemtabela.OrdemTabela;
 import boletimdasaude.application.mappers.ordemtabela.EditarOrdemTabelaMapper;
@@ -8,8 +7,6 @@ import boletimdasaude.application.requests.ordemtabela.EditarOrdemTabelaRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/ordem-tabela")
