@@ -141,14 +141,6 @@ public class DadosEspecialidadeInteractor {
         );
     }
 
-    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidade(String data) {
-        return resultadoMensalEspecialidadeRepository.buscarDadosEspecialidades(data);
-    }
-
-    public List<TabelaCabecalhoEspecialidadesResponse> buscarCabecalhosEspecialidades(String data) {
-        return ordemTabelaRepository.buscarCabecalhosEspecialidades(data);
-    }
-
     public List<TabelaCabecalhoEspecialidadesResponse> organizarDadosEspecialidades(String data) {
         List<TabelaCabecalhoEspecialidadesResponse> cabecalhosEspecialidades = buscarCabecalhosEspecialidades(data);
         List<TabelaEspecialidadesResponse> dadosEspecialidades = buscarDadosEspecialidade(data);
@@ -162,6 +154,14 @@ public class DadosEspecialidadeInteractor {
         agregarDadosEspecialidades();
 
         return cabecalhosEspecialidades;
+    }
+
+    public List<TabelaCabecalhoEspecialidadesResponse> buscarCabecalhosEspecialidades(String data) {
+        return ordemTabelaRepository.buscarCabecalhosEspecialidades(data);
+    }
+
+    public List<TabelaEspecialidadesResponse> buscarDadosEspecialidade(String data) {
+        return resultadoMensalEspecialidadeRepository.buscarDadosEspecialidades(data);
     }
 
     private void ordenarCabecalhosEspecialidades(List<TabelaCabecalhoEspecialidadesResponse> cabecalhos) {

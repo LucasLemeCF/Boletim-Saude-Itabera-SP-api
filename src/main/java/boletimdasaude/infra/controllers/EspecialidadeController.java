@@ -32,6 +32,14 @@ public class EspecialidadeController {
         return ResponseEntity.ok().body(especialidadeInteractor.buscarTodasEspecialidades());
     }
 
+    @GetMapping(path = "/{data}")
+    public ResponseEntity<List<Especialidade>> buscarTodasEspecialidadeRelatorio(
+            @PathVariable(value="data") String data
+    ) {
+        return ResponseEntity.ok().body(especialidadeInteractor.buscarTodasEspecialidadesComDadosMes(data));
+    }
+
+
     @PatchMapping(path = "/{id}")
     public ResponseEntity<Especialidade> editarEspecialidade(
             @PathVariable(value="id") Long id,

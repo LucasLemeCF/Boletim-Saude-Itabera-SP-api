@@ -1,12 +1,10 @@
 package boletimdasaude.application.gateways.especialidade;
 
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
-import boletimdasaude.application.responses.tabela.TabelaCabecalhoEspecialidadesResponse;
 import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.domain.especialidade.ResultadoDiarioEspecialidade;
 import boletimdasaude.domain.especialidade.ResultadoMensalEspecialidade;
 
-import java.util.Date;
 import java.util.List;
 
 public interface IResultadoMensalEspecialidadeRepository {

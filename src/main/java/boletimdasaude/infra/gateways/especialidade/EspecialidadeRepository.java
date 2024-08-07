@@ -9,6 +9,7 @@ import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa
 import boletimdasaude.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
 import boletimdasaude.infra.persitence.especialidade.entities.EspecialidadeEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,42 @@ public class EspecialidadeRepository implements IEspecialidadeRepository, ITabel
     @Override
     public List<Especialidade> buscarTodasEspecialidades() {
         return especialidadeEntityMapper.toDomainList(repository.findAll());
+    }
+
+    @Override
+    public List<Especialidade> buscarTodasEspecialidadesComDadosMes(String data) {
+        List<Especialidade> resultado = new ArrayList<>();
+
+        int mes = extrairtMes(data);
+        int ano = extrairtAno(data);
+
+        List<EspecialidadeEntity> listaEspecialidade = repository.findAll();
+
+        for (EspecialidadeEntity especialidadeEntity : listaEspecialidade) {
+          if (especialidadeEntity.getResultadosMensais() != null) {
+            for (int i = 0; i < especialidadeEntity.getResultadosMensais().size(); i++) {
+              if (especialidadeEntity.getResultadosMensais().get(i).getMes() == mes
+                    && especialidadeEntity.getResultadosMensais().get(i).getAno() == ano
+                    && especialidadeEntity.getResultadosMensais().get(i).getMetaMensal() > 0) {
+                  resultado.add(EspecialidadeEntityMapper.toDomain(especialidadeEntity));
+              }
+            }
+          }
+        }
+
+        return resultado;
+    }
+
+    public int extrairtMes(String date) {
+        String[] partes = date.split("-");
+        int mes = Integer.parseInt(partes[0]);
+        return mes;
+    }
+
+    public int extrairtAno(String date) {
+        String[] partes = date.split("-");
+        int ano = Integer.parseInt(partes[1]);
+        return ano;
     }
 
     @Override

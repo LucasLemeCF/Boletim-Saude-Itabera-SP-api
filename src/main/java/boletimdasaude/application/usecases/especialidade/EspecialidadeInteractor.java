@@ -3,6 +3,7 @@ package boletimdasaude.application.usecases.especialidade;
 import boletimdasaude.application.gateways.especialidade.IEspecialidadeRepository;
 import boletimdasaude.domain.especialidade.Especialidade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EspecialidadeInteractor {
@@ -19,6 +20,10 @@ public class EspecialidadeInteractor {
 
     public List<Especialidade> buscarTodasEspecialidades() {
         return especialidadeRepository.buscarTodasEspecialidades();
+    }
+
+    public List<Especialidade> buscarTodasEspecialidadesComDadosMes(String data) {
+        return especialidadeRepository.buscarTodasEspecialidadesComDadosMes(data);
     }
 
     public Especialidade editarEspecialidade(Long id, Especialidade especialidade) {

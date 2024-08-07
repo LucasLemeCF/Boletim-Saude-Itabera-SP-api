@@ -11,6 +11,8 @@ public interface IEspecialidadeRepository {
 
     List<Especialidade> buscarTodasEspecialidades();
 
+    List<Especialidade> buscarTodasEspecialidadesComDadosMes(String data);
+
     Optional<Especialidade> buscarEspecialidade(Long especialidadeId);
 
     Especialidade editarEspecialidade(Long id, Especialidade especialidade);
