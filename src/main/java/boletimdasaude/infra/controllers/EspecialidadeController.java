@@ -39,7 +39,6 @@ public class EspecialidadeController {
         return ResponseEntity.ok().body(especialidadeInteractor.buscarTodasEspecialidadesComDadosMes(data));
     }
 
-
     @PatchMapping(path = "/{id}")
     public ResponseEntity<Especialidade> editarEspecialidade(
             @PathVariable(value="id") Long id,
