@@ -8,6 +8,7 @@ import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspeci
 import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
 import boletimdasaude.infra.persitence.especialidade.entities.EspecialidadeEntity;
+import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,15 +47,16 @@ public class EspecialidadeRepository implements IEspecialidadeRepository, ITabel
         List<EspecialidadeEntity> listaEspecialidade = repository.findAll();
 
         for (EspecialidadeEntity especialidadeEntity : listaEspecialidade) {
-          if (especialidadeEntity.getResultadosMensais() != null) {
-            for (int i = 0; i < especialidadeEntity.getResultadosMensais().size(); i++) {
-              if (especialidadeEntity.getResultadosMensais().get(i).getMes() == mes
-                    && especialidadeEntity.getResultadosMensais().get(i).getAno() == ano
-                    && especialidadeEntity.getResultadosMensais().get(i).getMetaMensal() > 0) {
-                  resultado.add(EspecialidadeEntityMapper.toDomain(especialidadeEntity));
-              }
+            if (especialidadeEntity.getResultadosMensais() != null) {
+                for (ResultadoMensalEspecialidadeEntity resultadoMensal : especialidadeEntity.getResultadosMensais()) {
+                    if (resultadoMensal.getMes() == mes && resultadoMensal.getAno() == ano) {
+                      List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal = new ArrayList<>();
+                      listaResultadoMensal.add(resultadoMensal);
+                      especialidadeEntity.setResultadosMensais(listaResultadoMensal);
+                      resultado.add(EspecialidadeEntityMapper.toDomain(especialidadeEntity));
+                    }
+                }
             }
-          }
         }
 
         return resultado;
