@@ -229,7 +229,10 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
 
             ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = buscarResultadoDiarioEspecialidade(listaResultadoDiario, linha);
             ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = buscarResultadoMensalEspecialidade(listaResultadoMensal, linha);
-            resultadoMensalEspecialidadeEntity = trazerApenasAtendimentosAteODia(resultadoMensalEspecialidadeEntity);
+
+            if (resultadoMensalEspecialidadeEntity != null) {
+                trazerApenasAtendimentosAteODia(resultadoMensalEspecialidadeEntity);
+            }
 
             if (resultadoDiarioEspecialidadeEntity != null){
                 tabelaEspecialidadesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioEspecialidadeEntity);
@@ -279,7 +282,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         return resultado;
     }
 
-    private ResultadoMensalEspecialidadeEntity trazerApenasAtendimentosAteODia(ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity) {
+    private void trazerApenasAtendimentosAteODia(ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity) {
         int atendimentos = 0;
 
         for (ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidade : resultadoMensalEspecialidadeEntity.getResultadosDiarios()) {
@@ -289,8 +292,6 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         }
 
         resultadoMensalEspecialidadeEntity.setAtendimentos(atendimentos);
-
-        return resultadoMensalEspecialidadeEntity;
     }
 
     private TabelaEspecialidadesResponse montarTabelaDadosExistentes(LinhaTabela linha, ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidade) {
