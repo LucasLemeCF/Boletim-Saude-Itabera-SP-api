@@ -14,7 +14,7 @@ public interface IProcedimentoCirurgiaoRepository {
 
     Optional<ProcedimentoCirurgiaoEntity> buscarProcedimentoCirurgiaoEntity(Long procedimentoId);
 
-    ProcedimentoCirurgiao editarProcedimentoCirurgiao(Long id, ProcedimentoCirurgiao cirurgiao);
+    ProcedimentoCirurgiao editarProcedimentoCirurgiao(Long id, ProcedimentoCirurgiao cirurgiao, Long cirurgiaoId);
 
     String excluirProcedimentoCirurgiao(Long id);
 

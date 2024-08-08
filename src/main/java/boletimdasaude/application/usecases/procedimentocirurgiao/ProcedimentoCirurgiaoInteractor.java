@@ -21,8 +21,8 @@ public class ProcedimentoCirurgiaoInteractor {
         return procedimentoCirurgiaoRepository.buscarTodosProcedimentosCirurgioes();
     }
 
-    public ProcedimentoCirurgiao editarProcedimentoCirurgiao(Long id, ProcedimentoCirurgiao procedimentoCirurgiao) {
-        return procedimentoCirurgiaoRepository.editarProcedimentoCirurgiao(id, procedimentoCirurgiao);
+    public ProcedimentoCirurgiao editarProcedimentoCirurgiao(Long id, ProcedimentoCirurgiao procedimentoCirurgiao, Long cirurgiaoId) {
+        return procedimentoCirurgiaoRepository.editarProcedimentoCirurgiao(id, procedimentoCirurgiao, cirurgiaoId);
     }
 
     public String excluirProcedimentoCirurgiao(Long id) {

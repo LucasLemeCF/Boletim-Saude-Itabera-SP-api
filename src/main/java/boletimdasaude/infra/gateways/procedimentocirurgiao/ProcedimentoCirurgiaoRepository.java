@@ -7,6 +7,7 @@ import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
 import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
 import boletimdasaude.infra.gateways.procedimentocirurgiao.mappers.ProcedimentoCirurgiaoEntityMapper;
+import boletimdasaude.infra.persitence.cirurgiao.ICirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.entities.CirurgiaoEntity;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ProcedimentoCirurgiaoEntity;
@@ -18,11 +19,14 @@ public class ProcedimentoCirurgiaoRepository implements IProcedimentoCirurgiaoRe
 
     private final IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa;
     private final CirurgiaoRepository cirurgiaoRepository;
+    private final ICirurgiaoRepositoryJpa cirurgiaoRepositoryJpa;
 
     public ProcedimentoCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa,
-                                           CirurgiaoRepository cirurgiaoRepository) {
+                                           CirurgiaoRepository cirurgiaoRepository,
+                                           ICirurgiaoRepositoryJpa cirurgiaoRepositoryJpa) {
         this.procedimentoCirurgiaoRepositoryJpa = procedimentoCirurgiaoRepositoryJpa;
         this.cirurgiaoRepository = cirurgiaoRepository;
+        this.cirurgiaoRepositoryJpa = cirurgiaoRepositoryJpa;
     }
 
     @Override
@@ -51,20 +55,17 @@ public class ProcedimentoCirurgiaoRepository implements IProcedimentoCirurgiaoRe
     }
 
     @Override
-    public ProcedimentoCirurgiao editarProcedimentoCirurgiao(Long id, ProcedimentoCirurgiao procedimentoCirurgiao) {
+    public ProcedimentoCirurgiao editarProcedimentoCirurgiao(Long id, ProcedimentoCirurgiao procedimentoCirurgiao, Long cirurgiaoId) {
         ProcedimentoCirurgiaoEntity oldEntity = procedimentoCirurgiaoRepositoryJpa.findById(id)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(String.format("ID %s não econtrado", id))
                 );
 
-        ProcedimentoCirurgiaoEntity newEntity = new ProcedimentoCirurgiaoEntity(
-                id,
-                procedimentoCirurgiao.nome() != null ? procedimentoCirurgiao.nome() : oldEntity.getNome(),
-                ResultadoMensalCirurgiaoMapper.toEntityList(procedimentoCirurgiao.resultadosMensais())
-        );
+        oldEntity.setNome(procedimentoCirurgiao.nome());
+        oldEntity.setCirurgiao(cirurgiaoRepository.buscarCirurgiaoPorId(cirurgiaoId));
 
-        return ProcedimentoCirurgiaoEntityMapper.toDomain(procedimentoCirurgiaoRepositoryJpa.save(newEntity));
+        return ProcedimentoCirurgiaoEntityMapper.toDomain(procedimentoCirurgiaoRepositoryJpa.save(oldEntity));
     }
 
     @Override

@@ -5,6 +5,7 @@ import boletimdasaude.application.usecases.procedimentocirurgiao.ProcedimentoCir
 import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
 import boletimdasaude.infra.gateways.procedimentocirurgiao.ProcedimentoCirurgiaoRepository;
 import boletimdasaude.infra.gateways.procedimentocirurgiao.mappers.ProcedimentoCirurgiaoEntityMapper;
+import boletimdasaude.infra.persitence.cirurgiao.ICirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ProcedimentoCirurgiaoEntity;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +26,9 @@ public class ProcedimentoCirurgiaoConfig {
 
     @Bean
     ProcedimentoCirurgiaoRepository procedimentoCirurgiaoRepository(IProcedimentoCirurgiaoRepositoryJpa procedimentoCirurgiaoRepositoryJpa,
-                                                                    CirurgiaoRepository cirurgiaoRepository) {
-        return new ProcedimentoCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, cirurgiaoRepository);
+                                                                    CirurgiaoRepository cirurgiaoRepository,
+                                                                    ICirurgiaoRepositoryJpa cirurgiaoRepositoryJpa) {
+        return new ProcedimentoCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, cirurgiaoRepository, cirurgiaoRepositoryJpa);
     }
 
     @Bean

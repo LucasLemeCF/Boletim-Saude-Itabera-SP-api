@@ -35,7 +35,7 @@ public class ProcedimentoCirurgiaoController {
             @PathVariable(value="id") Long id,
             @Valid @RequestBody ProcedimentoCirurgiaoRequest request
     ) {
-        ProcedimentoCirurgiao procedimentoProcedimentoCirurgiao = procedimentoProcedimentoCirurgiaoInteractor.editarProcedimentoCirurgiao(id, ProcedimentoCirurgiaoMapper.toDomain(request));
+        ProcedimentoCirurgiao procedimentoProcedimentoCirurgiao = procedimentoProcedimentoCirurgiaoInteractor.editarProcedimentoCirurgiao(id, ProcedimentoCirurgiaoMapper.toDomain(request), request.cirurgiaoId());
         return ResponseEntity.ok().body(procedimentoProcedimentoCirurgiao);
     }
 
