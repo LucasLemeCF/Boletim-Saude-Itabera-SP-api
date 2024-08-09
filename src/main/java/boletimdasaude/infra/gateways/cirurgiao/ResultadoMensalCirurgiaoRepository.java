@@ -230,7 +230,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
             if (temDadosNoDia(resultadoDiarioCirurgiao)) {
                 tabelaCirurgioesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioCirurgiao);
             } else if (naoTemDadosNoMes(resultadoMensalCirurgiao)) {
-                tabelaCirurgioesResponse = montarTabelaSemDadosParaOMes(linha, resultadoMensalCirurgiao);
+                tabelaCirurgioesResponse = montarTabelaSemDadosParaOMes(linha);
             } else {
                 tabelaCirurgioesResponse = montarTabelaSemDadosParaODIa(linha, resultadoMensalCirurgiao);
             }
@@ -263,11 +263,12 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         );
     }
 
-    private TabelaCirurgioesResponse montarTabelaSemDadosParaOMes(LinhaTabela linha, ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao) {
-        Optional<ProcedimentoCirurgiaoEntity> cirurgiao = procedimentoCirurgiaoRepository.buscarProcedimentoCirurgiaoEntity(linha.componenteId());
+    private TabelaCirurgioesResponse montarTabelaSemDadosParaOMes(LinhaTabela linha) {
+        Optional<ProcedimentoCirurgiaoEntity> procedimento = procedimentoCirurgiaoRepository.buscarProcedimentoCirurgiaoEntity(linha.componenteId());
 
-        String nomeCirurgiao = cirurgiao.isPresent() ? cirurgiao.get().getCirurgiao().getNome() : "";
-        String nomeProcedimento = cirurgiao.isPresent() ? cirurgiao.get().getNome() : "";
+        String nomeCirurgiao = procedimento.isPresent() ? procedimento.get().getCirurgiao().getNome() : "";
+        String nomeProcedimento = procedimento.isPresent() ? procedimento.get().getNome() : "";
+        Long idProcedimento = procedimento.isPresent() ? procedimento.get().getId() : null;
 
         return new TabelaCirurgioesResponse(
                 linha.posicao(),
@@ -276,7 +277,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
                 nomeProcedimento,
                 0,
                 0,
-                calculaAtendimentosNoAno()
+                calculaAtendimentosNoAnoSemAtendimentosMes(idProcedimento)
         );
     }
 
@@ -340,7 +341,9 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         int atendimentosAno = 0;
 
         for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity : resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getResultadosMensais()) {
-            atendimentosAno += resultadoMensalCirurgiaoEntity.getAtendimentos();
+            if (resultadoMensalCirurgiaoEntity.getMes() <= mes) {
+                atendimentosAno += resultadoMensalCirurgiaoEntity.getAtendimentos();
+            }
         }
 
         return atendimentosAno;
@@ -350,19 +353,23 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         int atendimentosAno = 0;
 
         for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao : resultadoMensalCirurgiaoEntityAtual.getProcedimento().getResultadosMensais()) {
-            atendimentosAno += resultadoMensalCirurgiao.getAtendimentos();
+            if (resultadoMensalCirurgiao.getMes() <= mes) {
+                atendimentosAno += resultadoMensalCirurgiao.getAtendimentos();
+            }
         }
 
         return atendimentosAno;
     }
 
-    private int calculaAtendimentosNoAno() {
+    private int calculaAtendimentosNoAnoSemAtendimentosMes(Long idProcedimento) {
         int atendimentosAno = 0;
 
         List<ResultadoMensalCirurgiaoEntity> listaResultadoMensal = resultadoMensalCirurgiaoRepositoryJpa.findByAno(ano);
 
         for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao : listaResultadoMensal) {
-            atendimentosAno += resultadoMensalCirurgiao.getAtendimentos();
+            if (resultadoMensalCirurgiao.getMes() <= mes && resultadoMensalCirurgiao.getProcedimento().getId().equals(idProcedimento)) {
+                atendimentosAno += resultadoMensalCirurgiao.getAtendimentos();
+            }
         }
 
         return atendimentosAno;
