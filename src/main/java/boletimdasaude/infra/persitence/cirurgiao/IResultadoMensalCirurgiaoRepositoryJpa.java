@@ -9,4 +9,6 @@ public interface IResultadoMensalCirurgiaoRepositoryJpa extends JpaRepository<Re
 
     List<ResultadoMensalCirurgiaoEntity> findByMesAndAno(int mes, int ano);
 
+    List<ResultadoMensalCirurgiaoEntity> findByAno(int ano);
+
 }

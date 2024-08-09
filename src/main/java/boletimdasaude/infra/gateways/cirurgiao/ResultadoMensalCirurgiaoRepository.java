@@ -4,19 +4,15 @@ import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRe
 import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
 import boletimdasaude.application.responses.tabela.TabelaCirurgioesResponse;
-import boletimdasaude.application.responses.tabela.TabelaEspecialidadesResponse;
 import boletimdasaude.application.util.ConverterData;
 import boletimdasaude.config.exceptions.NotFoundException;
-import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
 import boletimdasaude.domain.cirurgiao.ResultadoDiarioCirurgiao;
 import boletimdasaude.domain.cirurgiao.ResultadoMensalCirurgiao;
 import boletimdasaude.domain.enums.TipoLinha;
-import boletimdasaude.domain.especialidade.Especialidade;
 import boletimdasaude.domain.ordemtabela.LinhaTabela;
 import boletimdasaude.domain.ordemtabela.OrdemTabela;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoDiarioCirurgiaoMapper;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.ResultadoMensalCirurgiaoMapper;
-import boletimdasaude.infra.gateways.ordemtabela.LinhaTabelaRepository;
 import boletimdasaude.infra.gateways.procedimentocirurgiao.ProcedimentoCirurgiaoRepository;
 import boletimdasaude.infra.persitence.cirurgiao.IProcedimentoCirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.IResultadoDiarioCirurgiaoRepositoryJpa;
@@ -195,11 +191,7 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         List<TabelaCirurgioesResponse> tabelaCirurgioesResponses = new ArrayList<>();
 
         instanciaVariaveis(data);
-
-        List<ResultadoMensalCirurgiaoEntity> listaResultadoMensal = resultadoMensalCirurgiaoRepositoryJpa.findByMesAndAno(mes, ano);
-        List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario = buscarResultadoDiarioCirurgiao(listaResultadoMensal);
-
-        montarTabelaCirurgioes(tabelaCirurgioesResponses, listaResultadoDiario);
+        montarTabelaCirurgioes(tabelaCirurgioesResponses);
 
         return tabelaCirurgioesResponses;
     }
@@ -218,40 +210,29 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         return listaResultadoDiario;
     }
 
-    private void montarTabelaCirurgioes(List<TabelaCirurgioesResponse> tabelaCirurgioesResponses, List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario) {
+    private void montarTabelaCirurgioes(List<TabelaCirurgioesResponse> tabelaCirurgioesResponses) {
+        List<ResultadoMensalCirurgiaoEntity> listaResultadoMensal = resultadoMensalCirurgiaoRepositoryJpa.findByMesAndAno(mes, ano);
+        List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario = buscarResultadoDiarioCirurgiao(listaResultadoMensal);
+
         OrdemTabela ordemTabela = tabelaRepository.buscarOrdemTabela(data);
         List<LinhaTabela> ordemTabelaCirurgiao = separarOrdemTabelaCirurgiao(ordemTabela);
 
         for (LinhaTabela linha : ordemTabelaCirurgiao) {
             TabelaCirurgioesResponse tabelaCirurgioesResponse = null;
 
-            ResultadoDiarioCirurgiaoEntity resultadoDiariCirurgiao = buscarResultadoDiarioCirurgiao(listaResultadoDiario, linha);
+            ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiao = buscarResultadoDiarioCirurgiao(listaResultadoDiario, linha);
+            ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao = buscarResultadoMensalCirurgiao(listaResultadoMensal, linha);
 
-            if (resultadoDiariCirurgiao != null){
-                tabelaCirurgioesResponse = new TabelaCirurgioesResponse(
-                        linha.posicao(),
-                        resultadoDiariCirurgiao.getResultadoMensalCirurgiao().getProcedimento().getId(),
-                        resultadoDiariCirurgiao.getResultadoMensalCirurgiao().getProcedimento().getCirurgiao().getNome(),
-                        resultadoDiariCirurgiao.getResultadoMensalCirurgiao().getProcedimento().getNome(),
-                        resultadoDiariCirurgiao.getAtendimentos(),
-                        resultadoDiariCirurgiao.getResultadoMensalCirurgiao().getAtendimentos(),
-                        calculaAtendimentosNoAno(resultadoDiariCirurgiao)
-                );
-            }  else {
-                Optional<ProcedimentoCirurgiaoEntity> especialidade = procedimentoCirurgiaoRepository.buscarProcedimentoCirurgiaoEntity(linha.componenteId());
+            if (resultadoMensalCirurgiao != null) {
+                trazerApenasAtendimentosAteODia(resultadoMensalCirurgiao);
+            }
 
-                String nomeCirurgiao = especialidade.isPresent() ? especialidade.get().getCirurgiao().getNome() : "";
-                String nomeProcedimento = especialidade.isPresent() ? especialidade.get().getNome() : "";
-
-                tabelaCirurgioesResponse = new TabelaCirurgioesResponse(
-                        linha.posicao(),
-                        linha.componenteId(),
-                        nomeCirurgiao,
-                        nomeProcedimento,
-                        0,
-                        0,
-                        0
-                );
+            if (temDadosNoDia(resultadoDiarioCirurgiao)) {
+                tabelaCirurgioesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioCirurgiao);
+            } else if (naoTemDadosNoMes(resultadoMensalCirurgiao)) {
+                tabelaCirurgioesResponse = montarTabelaSemDadosParaOMes(linha, resultadoMensalCirurgiao);
+            } else {
+                tabelaCirurgioesResponse = montarTabelaSemDadosParaODIa(linha, resultadoMensalCirurgiao);
             }
 
             tabelaCirurgioesResponses.add(tabelaCirurgioesResponse);
@@ -270,6 +251,47 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         return response;
     }
 
+    private TabelaCirurgioesResponse montarTabelaDadosExistentes(LinhaTabela linha, ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiao) {
+        return new TabelaCirurgioesResponse(
+                linha.posicao(),
+                resultadoDiarioCirurgiao.getResultadoMensalCirurgiao().getProcedimento().getId(),
+                resultadoDiarioCirurgiao.getResultadoMensalCirurgiao().getProcedimento().getCirurgiao().getNome(),
+                resultadoDiarioCirurgiao.getResultadoMensalCirurgiao().getProcedimento().getNome(),
+                resultadoDiarioCirurgiao.getAtendimentos(),
+                resultadoDiarioCirurgiao.getResultadoMensalCirurgiao().getAtendimentos(),
+                calculaAtendimentosNoAno(resultadoDiarioCirurgiao)
+        );
+    }
+
+    private TabelaCirurgioesResponse montarTabelaSemDadosParaOMes(LinhaTabela linha, ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao) {
+        Optional<ProcedimentoCirurgiaoEntity> cirurgiao = procedimentoCirurgiaoRepository.buscarProcedimentoCirurgiaoEntity(linha.componenteId());
+
+        String nomeCirurgiao = cirurgiao.isPresent() ? cirurgiao.get().getCirurgiao().getNome() : "";
+        String nomeProcedimento = cirurgiao.isPresent() ? cirurgiao.get().getNome() : "";
+
+        return new TabelaCirurgioesResponse(
+                linha.posicao(),
+                linha.componenteId(),
+                nomeCirurgiao,
+                nomeProcedimento,
+                0,
+                0,
+                calculaAtendimentosNoAno()
+        );
+    }
+
+    private TabelaCirurgioesResponse montarTabelaSemDadosParaODIa(LinhaTabela linha, ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity) {
+        return new TabelaCirurgioesResponse(
+                linha.posicao(),
+                linha.componenteId(),
+                resultadoMensalCirurgiaoEntity.getProcedimento().getCirurgiao().getNome(),
+                resultadoMensalCirurgiaoEntity.getProcedimento().getNome(),
+                0,
+                resultadoMensalCirurgiaoEntity.getAtendimentos(),
+                calculaAtendimentosNoAno(resultadoMensalCirurgiaoEntity)
+        );
+    }
+
     private ResultadoDiarioCirurgiaoEntity buscarResultadoDiarioCirurgiao(List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiarioCirurgiao, LinhaTabela linha) {
         ResultadoDiarioCirurgiaoEntity resultado = null;
 
@@ -280,6 +302,26 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         }
 
         return resultado;
+    }
+
+    private void trazerApenasAtendimentosAteODia(ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity) {
+        int atendimentos = 0;
+
+        for (ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity : resultadoMensalCirurgiaoEntity.getResultadosDiarios()) {
+            if (resultadoDiarioCirurgiaoEntity.getDia() <= dia) {
+                atendimentos += resultadoDiarioCirurgiaoEntity.getAtendimentos();
+            }
+        }
+
+        resultadoMensalCirurgiaoEntity.setAtendimentos(atendimentos);
+    }
+
+    private boolean temDadosNoDia(ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiaoEntity) {
+        return resultadoDiarioCirurgiaoEntity != null;
+    }
+
+    private boolean naoTemDadosNoMes(ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity) {
+        return resultadoMensalCirurgiaoEntity == null;
     }
 
     private ResultadoMensalCirurgiaoEntity buscarResultadoMensalCirurgiao(List<ResultadoMensalCirurgiaoEntity> listaResultadoMensal, LinhaTabela linha) {
@@ -299,6 +341,28 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
 
         for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntity : resultadoDiarioCirurgiaoEntity.getResultadoMensalCirurgiao().getProcedimento().getResultadosMensais()) {
             atendimentosAno += resultadoMensalCirurgiaoEntity.getAtendimentos();
+        }
+
+        return atendimentosAno;
+    }
+
+    private int calculaAtendimentosNoAno(ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiaoEntityAtual) {
+        int atendimentosAno = 0;
+
+        for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao : resultadoMensalCirurgiaoEntityAtual.getProcedimento().getResultadosMensais()) {
+            atendimentosAno += resultadoMensalCirurgiao.getAtendimentos();
+        }
+
+        return atendimentosAno;
+    }
+
+    private int calculaAtendimentosNoAno() {
+        int atendimentosAno = 0;
+
+        List<ResultadoMensalCirurgiaoEntity> listaResultadoMensal = resultadoMensalCirurgiaoRepositoryJpa.findByAno(ano);
+
+        for (ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao : listaResultadoMensal) {
+            atendimentosAno += resultadoMensalCirurgiao.getAtendimentos();
         }
 
         return atendimentosAno;

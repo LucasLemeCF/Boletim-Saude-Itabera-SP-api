@@ -197,11 +197,7 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses = new ArrayList<>();
 
         instanciaVariaveis(data);
-
-        List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal = resultadoMensalEspecialidadeRepositoryJpa.findByMesAndAno(mes, ano);
-        List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario = buscarResultadoDiarioEspecialidade(listaResultadoMensal);
-
-        montarTabelaEspecialidades(tabelaEspecialidadesResponses, listaResultadoDiario, listaResultadoMensal);
+        montarTabelaEspecialidades(tabelaEspecialidadesResponses);
 
         return tabelaEspecialidadesResponses;
     }
@@ -220,7 +216,10 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         return listaResultadoDiario;
     }
 
-    private void montarTabelaEspecialidades(List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses, List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario, List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal) {
+    private void montarTabelaEspecialidades(List<TabelaEspecialidadesResponse> tabelaEspecialidadesResponses) {
+        List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal = resultadoMensalEspecialidadeRepositoryJpa.findByMesAndAno(mes, ano);
+        List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario = buscarResultadoDiarioEspecialidade(listaResultadoMensal);
+
         OrdemTabela ordemTabela = tabelaRepository.buscarOrdemTabela(data);
         List<LinhaTabela> ordemTabelaEspecialidade = separarOrdemTabelaEspecialidade(ordemTabela);
 
@@ -234,9 +233,9 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
                 trazerApenasAtendimentosAteODia(resultadoMensalEspecialidadeEntity);
             }
 
-            if (resultadoDiarioEspecialidadeEntity != null){
+            if (temDadosNoDia(resultadoDiarioEspecialidadeEntity)) {
                 tabelaEspecialidadesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioEspecialidadeEntity);
-            } else if (resultadoMensalEspecialidadeEntity == null) {
+            } else if (naoTemDadosNoMes(resultadoMensalEspecialidadeEntity)) {
                 tabelaEspecialidadesResponse = montarTabelaSemDadosParaOMes(linha);
             } else {
                 tabelaEspecialidadesResponse = montarTabelaSemDadosParaODIa(linha, resultadoMensalEspecialidadeEntity);
@@ -292,6 +291,14 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         }
 
         resultadoMensalEspecialidadeEntity.setAtendimentos(atendimentos);
+    }
+
+    private boolean temDadosNoDia(ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity) {
+        return resultadoDiarioEspecialidadeEntity != null;
+    }
+
+    private boolean naoTemDadosNoMes(ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity) {
+        return resultadoMensalEspecialidadeEntity == null;
     }
 
     private TabelaEspecialidadesResponse montarTabelaDadosExistentes(LinhaTabela linha, ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidade) {
