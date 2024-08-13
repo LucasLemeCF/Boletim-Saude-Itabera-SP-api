@@ -14,7 +14,6 @@ import java.util.List;
 public class CirurgiaoController {
 
     private final CirurgiaoInteractor cirurgiaoInteractor;
-    //    private final CirurgiaoMapper cirurgiaoMapper;
 
     public CirurgiaoController(CirurgiaoInteractor cirurgiaoInteractor) {
         this.cirurgiaoInteractor = cirurgiaoInteractor;
@@ -29,6 +28,13 @@ public class CirurgiaoController {
     @GetMapping
     public ResponseEntity<List<Cirurgiao>> buscarTodosCirurgioes() {
         return ResponseEntity.ok().body(cirurgiaoInteractor.buscarTodosCirurgioes());
+    }
+
+    @GetMapping(path = "/{data}")
+    public ResponseEntity<List<Cirurgiao>> buscarTodosCirurgioesComDadosMes(
+            @PathVariable(value="data") String data
+    ) {
+        return ResponseEntity.ok().body(cirurgiaoInteractor.buscarTodosCirurgioesComDadosMes(data));
     }
 
     @PatchMapping(path = "/{id}")

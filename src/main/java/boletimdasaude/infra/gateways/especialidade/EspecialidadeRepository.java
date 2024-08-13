@@ -47,13 +47,13 @@ public class EspecialidadeRepository implements IEspecialidadeRepository, ITabel
         List<EspecialidadeEntity> listaEspecialidade = repository.findAll();
 
         for (EspecialidadeEntity especialidadeEntity : listaEspecialidade) {
-            if (especialidadeEntity.getResultadosMensais() != null) {
+            if (temresultadosMensais(especialidadeEntity.getResultadosMensais())) {
                 for (ResultadoMensalEspecialidadeEntity resultadoMensal : especialidadeEntity.getResultadosMensais()) {
                     if (resultadoMensal.getMes() == mes && resultadoMensal.getAno() == ano) {
-                      List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal = new ArrayList<>();
-                      listaResultadoMensal.add(resultadoMensal);
-                      especialidadeEntity.setResultadosMensais(listaResultadoMensal);
-                      resultado.add(EspecialidadeEntityMapper.toDomain(especialidadeEntity));
+                        List<ResultadoMensalEspecialidadeEntity> listaResultadoMensal = new ArrayList<>();
+                        listaResultadoMensal.add(resultadoMensal);
+                        especialidadeEntity.setResultadosMensais(listaResultadoMensal);
+                        resultado.add(EspecialidadeEntityMapper.toDomain(especialidadeEntity));
                     }
                 }
             }
@@ -62,16 +62,20 @@ public class EspecialidadeRepository implements IEspecialidadeRepository, ITabel
         return resultado;
     }
 
-    public int extrairtMes(String date) {
+    private int extrairtMes(String date) {
         String[] partes = date.split("-");
         int mes = Integer.parseInt(partes[0]);
         return mes;
     }
 
-    public int extrairtAno(String date) {
+    private int extrairtAno(String date) {
         String[] partes = date.split("-");
         int ano = Integer.parseInt(partes[1]);
         return ano;
+    }
+
+    private boolean temresultadosMensais(List<ResultadoMensalEspecialidadeEntity> resultadosMensais) {
+        return resultadosMensais != null;
     }
 
     @Override

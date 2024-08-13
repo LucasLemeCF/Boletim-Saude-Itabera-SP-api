@@ -21,6 +21,10 @@ public class CirurgiaoInteractor {
         return cirurgiaoRepository.buscarTodosCirurgioes();
     }
 
+    public List<Cirurgiao> buscarTodosCirurgioesComDadosMes(String data) {
+        return cirurgiaoRepository.buscarTodosCirurgioesComDadosMes(data);
+    }
+
     public Cirurgiao editarCirurgiao(Long id, Cirurgiao cirurgiao) {
         return cirurgiaoRepository.editarCirurgiao(id, cirurgiao);
     }

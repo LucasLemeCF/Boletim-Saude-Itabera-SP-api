@@ -10,6 +10,8 @@ public interface ICirurgiaoRepository {
 
     List<Cirurgiao> buscarTodosCirurgioes();
 
+    List<Cirurgiao> buscarTodosCirurgioesComDadosMes(String data);
+
     Cirurgiao editarCirurgiao(Long id, Cirurgiao cirurgiao);
 
     String excluirCirurgiao(Long id);
