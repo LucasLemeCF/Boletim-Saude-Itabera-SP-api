@@ -3,16 +3,12 @@ package boletimdasaude.infra.gateways.cirurgiao;
 import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
 import boletimdasaude.config.exceptions.NotFoundException;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
-import boletimdasaude.domain.especialidade.Especialidade;
 import boletimdasaude.infra.gateways.cirurgiao.mappers.CirurgiaoEntityMapper;
-import boletimdasaude.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
 import boletimdasaude.infra.gateways.procedimentocirurgiao.mappers.ProcedimentoCirurgiaoEntityMapper;
 import boletimdasaude.infra.persitence.cirurgiao.ICirurgiaoRepositoryJpa;
 import boletimdasaude.infra.persitence.cirurgiao.entities.CirurgiaoEntity;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ProcedimentoCirurgiaoEntity;
 import boletimdasaude.infra.persitence.cirurgiao.entities.ResultadoMensalCirurgiaoEntity;
-import boletimdasaude.infra.persitence.especialidade.entities.EspecialidadeEntity;
-import boletimdasaude.infra.persitence.especialidade.entities.ResultadoMensalEspecialidadeEntity;
 
 import java.util.ArrayList;
 import java.util.List;

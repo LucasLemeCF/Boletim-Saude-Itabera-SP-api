@@ -37,6 +37,13 @@ public class CirurgiaoController {
         return ResponseEntity.ok().body(cirurgiaoInteractor.buscarTodosCirurgioesComDadosMes(data));
     }
 
+    @GetMapping(path = "/resultadoAno/{ano}")
+    public ResponseEntity<int[]> buscarResultadosDoAno(
+            @PathVariable(value="ano") int ano
+    ) {
+        return ResponseEntity.ok().body(cirurgiaoInteractor.buscarResultadosDoAno(ano));
+    }
+
     @PatchMapping(path = "/{id}")
     public ResponseEntity<Cirurgiao> editarCirurgiao(
             @PathVariable(value="id") Long id,
