@@ -24,6 +24,15 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+login:
+  usuario: ${USUARIO}
+  senha: ${SENHA}
+
+api:
+  token:
+    secret: ${API_TOKEN_SECRET}
+
+
 ---
 
 spring:
