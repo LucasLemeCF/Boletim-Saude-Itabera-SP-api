@@ -26,3 +26,11 @@ services:
       - POSTGRES_DB=BoletimMedico
     ports:
       - "5432:5432"
+
+  app-frontend:
+    container_name: boletim-saude-app
+    image: boletim-saude-itabera-sp-app
+    ports:
+      - "3000:3000"
+    depends_on:
+        - app
