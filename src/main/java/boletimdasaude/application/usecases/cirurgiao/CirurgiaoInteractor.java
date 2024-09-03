@@ -35,7 +35,7 @@ public class CirurgiaoInteractor {
         for (int i = 1; i <= 12; i++) {
             for (Cirurgiao cirurgiao : cirurgioes) {
                 for (ProcedimentoCirurgiao procedimento : cirurgiao.procedimentos()) {
-                    if (procedimento.resultadosMensais() != null) {
+                    if (procedimento.resultadosMensais() != null && !procedimento.nome().equals("Procedimento Anestésico")) {
                         for (ResultadoMensalCirurgiao resultadoMensal : procedimento.resultadosMensais()) {
                             if (resultadoMensal.mes() == i && resultadoMensal.ano() == ano) {
                                 resultados[i - 1] += resultadoMensal.atendimentos();
