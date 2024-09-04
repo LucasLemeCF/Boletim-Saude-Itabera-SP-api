@@ -221,27 +221,30 @@ public class ResultadoMensalEspecialidadeRepository implements IResultadoMensalE
         List<ResultadoDiarioEspecialidadeEntity> listaResultadoDiario = buscarResultadoDiarioEspecialidade(listaResultadoMensal);
 
         OrdemTabela ordemTabela = tabelaRepository.buscarOrdemTabela(data);
-        List<LinhaTabela> ordemTabelaEspecialidade = separarOrdemTabelaEspecialidade(ordemTabela);
 
-        for (LinhaTabela linha : ordemTabelaEspecialidade) {
-            TabelaEspecialidadesResponse tabelaEspecialidadesResponse;
+        if (ordemTabela != null) {
+            List<LinhaTabela> ordemTabelaEspecialidade = separarOrdemTabelaEspecialidade(ordemTabela);
 
-            ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = buscarResultadoDiarioEspecialidade(listaResultadoDiario, linha);
-            ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = buscarResultadoMensalEspecialidade(listaResultadoMensal, linha);
+            for (LinhaTabela linha : ordemTabelaEspecialidade) {
+                TabelaEspecialidadesResponse tabelaEspecialidadesResponse;
 
-            if (resultadoMensalEspecialidadeEntity != null) {
-                trazerApenasAtendimentosAteODia(resultadoMensalEspecialidadeEntity);
+                ResultadoDiarioEspecialidadeEntity resultadoDiarioEspecialidadeEntity = buscarResultadoDiarioEspecialidade(listaResultadoDiario, linha);
+                ResultadoMensalEspecialidadeEntity resultadoMensalEspecialidadeEntity = buscarResultadoMensalEspecialidade(listaResultadoMensal, linha);
+
+                if (resultadoMensalEspecialidadeEntity != null) {
+                    trazerApenasAtendimentosAteODia(resultadoMensalEspecialidadeEntity);
+                }
+
+                if (temDadosNoDia(resultadoDiarioEspecialidadeEntity)) {
+                    tabelaEspecialidadesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioEspecialidadeEntity);
+                } else if (naoTemDadosNoMes(resultadoMensalEspecialidadeEntity)) {
+                    tabelaEspecialidadesResponse = montarTabelaSemDadosParaOMes(linha);
+                } else {
+                    tabelaEspecialidadesResponse = montarTabelaSemDadosParaODIa(linha, resultadoMensalEspecialidadeEntity);
+                }
+
+                tabelaEspecialidadesResponses.add(tabelaEspecialidadesResponse);
             }
-
-            if (temDadosNoDia(resultadoDiarioEspecialidadeEntity)) {
-                tabelaEspecialidadesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioEspecialidadeEntity);
-            } else if (naoTemDadosNoMes(resultadoMensalEspecialidadeEntity)) {
-                tabelaEspecialidadesResponse = montarTabelaSemDadosParaOMes(linha);
-            } else {
-                tabelaEspecialidadesResponse = montarTabelaSemDadosParaODIa(linha, resultadoMensalEspecialidadeEntity);
-            }
-
-            tabelaEspecialidadesResponses.add(tabelaEspecialidadesResponse);
         }
     }
 

@@ -215,27 +215,30 @@ public class ResultadoMensalCirurgiaoRepository implements IResultadoMensalCirur
         List<ResultadoDiarioCirurgiaoEntity> listaResultadoDiario = buscarResultadoDiarioCirurgiao(listaResultadoMensal);
 
         OrdemTabela ordemTabela = tabelaRepository.buscarOrdemTabela(data);
-        List<LinhaTabela> ordemTabelaCirurgiao = separarOrdemTabelaCirurgiao(ordemTabela);
 
-        for (LinhaTabela linha : ordemTabelaCirurgiao) {
-            TabelaCirurgioesResponse tabelaCirurgioesResponse = null;
+        if (ordemTabela != null) {
+            List<LinhaTabela> ordemTabelaCirurgiao = separarOrdemTabelaCirurgiao(ordemTabela);
 
-            ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiao = buscarResultadoDiarioCirurgiao(listaResultadoDiario, linha);
-            ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao = buscarResultadoMensalCirurgiao(listaResultadoMensal, linha);
+            for (LinhaTabela linha : ordemTabelaCirurgiao) {
+                TabelaCirurgioesResponse tabelaCirurgioesResponse = null;
 
-            if (resultadoMensalCirurgiao != null) {
-                trazerApenasAtendimentosAteODia(resultadoMensalCirurgiao);
+                ResultadoDiarioCirurgiaoEntity resultadoDiarioCirurgiao = buscarResultadoDiarioCirurgiao(listaResultadoDiario, linha);
+                ResultadoMensalCirurgiaoEntity resultadoMensalCirurgiao = buscarResultadoMensalCirurgiao(listaResultadoMensal, linha);
+
+                if (resultadoMensalCirurgiao != null) {
+                    trazerApenasAtendimentosAteODia(resultadoMensalCirurgiao);
+                }
+
+                if (temDadosNoDia(resultadoDiarioCirurgiao)) {
+                    tabelaCirurgioesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioCirurgiao);
+                } else if (naoTemDadosNoMes(resultadoMensalCirurgiao)) {
+                    tabelaCirurgioesResponse = montarTabelaSemDadosParaOMes(linha);
+                } else {
+                    tabelaCirurgioesResponse = montarTabelaSemDadosParaODIa(linha, resultadoMensalCirurgiao);
+                }
+
+                tabelaCirurgioesResponses.add(tabelaCirurgioesResponse);
             }
-
-            if (temDadosNoDia(resultadoDiarioCirurgiao)) {
-                tabelaCirurgioesResponse = montarTabelaDadosExistentes(linha, resultadoDiarioCirurgiao);
-            } else if (naoTemDadosNoMes(resultadoMensalCirurgiao)) {
-                tabelaCirurgioesResponse = montarTabelaSemDadosParaOMes(linha);
-            } else {
-                tabelaCirurgioesResponse = montarTabelaSemDadosParaODIa(linha, resultadoMensalCirurgiao);
-            }
-
-            tabelaCirurgioesResponses.add(tabelaCirurgioesResponse);
         }
     }
 

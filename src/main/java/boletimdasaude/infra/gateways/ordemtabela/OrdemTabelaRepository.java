@@ -117,6 +117,11 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
     @Override
     public OrdemTabela buscarOrdemTabela(String data) {
         OrdemTabelaEntity ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+
+        if (ordemTabelaEntity == null) {
+            return null;
+        }
+
         return OrdemTabelaEntityMapper.toDomain(ordemTabelaEntity);
     }
 
@@ -125,6 +130,10 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
         List<TabelaCabecalhoEspecialidadesResponse> cabecalhos = new ArrayList<>();
 
        OrdemTabelaEntity ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+
+       if (ordemTabelaEntity == null) {
+           return cabecalhos;
+       }
 
         for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.getCabecalhosTabelaEntity()) {
             if (cabecalho.getTipo().equals(TipoLinha.ESPECIALIDADE_CABECALHO)) {
@@ -164,6 +173,10 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
         List<TabelaCabecalhoCirurgioesResponse> cabecalhos = new ArrayList<>();
 
         OrdemTabelaEntity ordemTabelaEntity = buscarOrdemTabelaEntity(data);
+
+        if (ordemTabelaEntity == null) {
+            return cabecalhos;
+        }
 
         for (CabecalhoTabelaEntity cabecalho : ordemTabelaEntity.getCabecalhosTabelaEntity()) {
             if (cabecalho.getTipo().equals(TipoLinha.CIRURGIAO_CABECALHO)) {
