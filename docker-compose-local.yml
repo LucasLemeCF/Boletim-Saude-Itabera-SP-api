@@ -3,7 +3,7 @@ name: boletim-saude-infra
 services:
   app:
     container_name: boletim-saude-api
-    image: lucaslemec/boletim-saude:1.2
+    build: .
     environment:
       - APPLICATION_PROFILE=dev
       - POSTGRES_USER=postgres
@@ -40,25 +40,12 @@ services:
       - PGADMIN_DEFAULT_EMAIL=test@test.com
       - PGADMIN_DEFAULT_PASSWORD=123
     ports:
-        - "5050:80"
+      - "5050:80"
     depends_on:
       - database
     networks:
       - boletim-saude-network
 
-  app-frontend:
-    container_name: boletim-saude-app
-    image: lucaslemec/boletim-saude-app:1.0
-    environment:
-      - NEXTAUTH_URL=http://localhost:3000
-      - NEXTAUTH_SECRET="OFsQ6wuWlBCetNwuME5qus2Zocu23bF0W9d3dZo5hGk="
-    ports:
-      - "3000:3000"
-    networks:
-      - boletim-saude-network
-    depends_on:
-        - app
-    
 networks:
   boletim-saude-network:
     driver: bridge

@@ -1,13 +1,15 @@
 # Boletim-Saude-Itabera-SP
 
 Projeto desenvolvido para a Prefeitura Municipal de Itaberá, com o objetivo de facilitar a criação de relátorios diários e mensais dos atendimentos medicos realizados da cidade.
-<br><br>
 
+<br>
 
-Front-end - React: https://github.com/LucasLemeCF/Boletim-Saude-Itabera-SP-app  
-API - Swagger: http://localhost:8080/api/swagger-ui/index.html  
+Front-end - React: https://github.com/LucasLemeCF/Boletim-Saude-Itabera-SP-app   
+Container - Docker Hub: https://hub.docker.com/repository/docker/lucaslemec/boletim-saude/general  
 Design - Figma: https://www.figma.com/design/Ena3r3kvJhocQlGNe5DT7i/Untitled?t=oyZD2n1bGHiyJxZm-0  
 Arquitetura - Miro: https://miro.com/app/board/uXjVK5NG8zs=/  
+API Local - Swagger: http://localhost:8080/api/swagger-ui/index.html  
+<br>
 
 ## Como Executar (Não finalizado)
 
@@ -105,7 +107,7 @@ git clone
 ```
 Em seguida, abra um terminal na mesma pasta do projeto e execute o comando:
 ```bash
-docker-compose -f docker-compose.yml up -d --build
+docker-compose -f docker-compose-local.yml up -d --build
 ```
 <br>
 
