@@ -8,12 +8,14 @@ services:
       - APPLICATION_PROFILE=dev
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_URL=jdbc:postgresql://postgres:5432/BoletimMedico
+      - POSTGRES_URL=jdbc:postgresql://postgres:5432/BoletimSaude
       - API_TOKEN_SECRET=lzl024rRZc
       - USUARIO=admin
       - SENHA=123
     ports:
       - "8080:8080"
+    networks:
+      - boletim-saude-network
     depends_on:
       - database
 
@@ -23,14 +25,40 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=BoletimMedico
+      - POSTGRES_DB=BoletimSaude
     ports:
       - "5432:5432"
+    volumes:
+      - ../docker/data/postgresql:/var/lib/postgresql/data
+    networks:
+      - boletim-saude-network
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=test@test.com
+      - PGADMIN_DEFAULT_PASSWORD=123
+    ports:
+        - "5050:80"
+    depends_on:
+      - database
+    networks:
+      - boletim-saude-network
 
   app-frontend:
     container_name: boletim-saude-app
     image: boletim-saude-itabera-sp-app
+    environment:
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET="OFsQ6wuWlBCetNwuME5qus2Zocu23bF0W9d3dZo5hGk="
     ports:
       - "3000:3000"
+    networks:
+      - boletim-saude-network
     depends_on:
         - app
+    
+networks:
+  boletim-saude-network:
+    driver: bridge
