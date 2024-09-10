@@ -119,7 +119,18 @@ git clone
 ```
 Por fim, abra um terminal na mesma pasta do projeto e execute o comando:
 ```bash
-docker-compose -f docker-compose-complete.yml up -d --build
+docker-compose -f docker-compose-prd.yml up -d --build
 ```
+Em seguida é necessário configurar as variveis de ambiente como no seguinte exemplo:
+```bash
+APPLICATION_PROFILE=dev
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_URL=jdbc:postgresql://postgres:5432/BoletimSaude
+API_TOKEN_SECRET=ABC123456789
+USUARIO=admin
+SENHA=123
+```
+
 
 ### Local

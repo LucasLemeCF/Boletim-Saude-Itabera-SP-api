@@ -5,7 +5,6 @@ services:
     container_name: boletim-saude-api
     image: lucaslemec/boletim-saude:1.2
     environment:
-      - APPLICATION_PROFILE=dev
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_URL=jdbc:postgresql://postgres:5432/BoletimSaude

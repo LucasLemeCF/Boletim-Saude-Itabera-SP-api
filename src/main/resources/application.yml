@@ -1,9 +1,11 @@
 spring:
-  profiles:
-    active: ${APPLICATION_PROFILE}
-
   application:
     name: boletim-saude-api
+
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
   jpa:
     hibernate:
@@ -25,34 +27,9 @@ springdoc:
     path: /swagger-ui.html
 
 login:
-  usuario: ${USUARIO}
-  senha: ${SENHA}
+  usuario: ${USUARIO_LOGIN}
+  senha: ${SENHA_LOGIN}
 
 api:
   token:
     secret: ${API_TOKEN_SECRET}
-
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: dev
-
-  datasource:
-    url: ${POSTGRES_URL}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-  datasource:
-    url: ${POSTGRES_URL}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}

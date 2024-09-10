@@ -5,13 +5,12 @@ services:
     container_name: boletim-saude-api
     build: .
     environment:
-      - APPLICATION_PROFILE=dev
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_URL=jdbc:postgresql://postgres:5432/BoletimSaude
-      - API_TOKEN_SECRET=lzl024rRZc
-      - USUARIO=admin
-      - SENHA=123
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_URL=${POSTGRES_URL}
+      - API_TOKEN_SECRET=${API_TOKEN_SECRET}
+      - USUARIO_LOGIN=${USUARIO_LOGIN}
+      - SENHA_LOGIN=${SENHA_LOGIN}
     ports:
       - "8080:8080"
     networks:
@@ -23,9 +22,9 @@ services:
     container_name: postgres
     image: postgres:16
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=BoletimSaude
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -37,8 +36,8 @@ services:
     container_name: pgadmin
     image: dpage/pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=test@test.com
-      - PGADMIN_DEFAULT_PASSWORD=123
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
     depends_on:
