@@ -45,6 +45,19 @@ services:
     networks:
       - boletim-saude-network
 
+  app-frontend:
+    container_name: boletim-saude-app
+    image: boletim-saude-itabera-sp-app
+    environment:
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    ports:
+      - "3000:3000"
+    networks:
+      - boletim-saude-network
+    depends_on:
+      - app
+
 networks:
   boletim-saude-network:
     driver: bridge
