@@ -11,7 +11,10 @@ import boletimdasaude.application.usecases.tabela.DadosCirurgiaoInteractor;
 import boletimdasaude.application.usecases.tabela.DadosEspecialidadeInteractor;
 import boletimdasaude.application.usecases.tabela.MontarOrdemTabela;
 import boletimdasaude.application.usecases.tabela.TabelaInteractor;
+import boletimdasaude.infra.gateways.especialidade.EspecialidadeRepository;
 import boletimdasaude.infra.gateways.especialidade.ResultadoMensalEspecialidadeRepository;
+import boletimdasaude.infra.gateways.especialidade.mappers.EspecialidadeEntityMapper;
+import boletimdasaude.infra.gateways.especialidade.mappers.ResultadoMensalEspecialidadeMapper;
 import boletimdasaude.infra.persitence.especialidade.IEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.IResultadoMensalEspecialidadeRepositoryJpa;
 import boletimdasaude.infra.persitence.especialidade.entities.IResultadoDiarioEspecialidadeRepositoryJpa;
@@ -36,6 +39,11 @@ public class TabelaConfig {
                 IOrdemTabelaRepository ordemTabelaRepository
     ) {
         return new DadosEspecialidadeInteractor(tabelaEspecialidadeRepository, resultadoMensalEspecialidadeRepository, ordemTabelaRepository);
+    }
+
+    @Bean
+    ITabelaEspecialidadeRepository iTabelaEspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepository, EspecialidadeEntityMapper especialidadeEntityMapper, ResultadoMensalEspecialidadeMapper resultadoMensalEspecialidadeMapper) {
+        return new EspecialidadeRepository(especialidadeRepository, especialidadeEntityMapper, resultadoMensalEspecialidadeMapper);
     }
 
     @Bean

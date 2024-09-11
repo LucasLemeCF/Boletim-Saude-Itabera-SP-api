@@ -32,7 +32,7 @@ public class CirurgiaoConfig {
     }
 
     @Bean
-    ICirurgiaoRepository cirurgiaoRepository(ICirurgiaoRepositoryJpa cirurgiaoRepository, CirurgiaoEntityMapper cirurgiaoEntityMapper ) {
+    ICirurgiaoRepository icirurgiaoRepository(ICirurgiaoRepositoryJpa cirurgiaoRepository, CirurgiaoEntityMapper cirurgiaoEntityMapper ) {
         return new CirurgiaoRepository(cirurgiaoRepository, cirurgiaoEntityMapper);
     }
 
@@ -53,6 +53,11 @@ public class CirurgiaoConfig {
                                                                            IOrdemTabelaRepository tabelaRepository,
                                                                            ProcedimentoCirurgiaoRepository procedimentoCirurgiaoRepository) {
         return new ResultadoMensalCirurgiaoRepository(procedimentoCirurgiaoRepositoryJpa, resultadoMensalCirurgiaoRepositoryJpa, resultadoDiarioCirurgiaoRepositoryJpa, tabelaRepository, procedimentoCirurgiaoRepository);
+    }
+
+    @Bean
+    CirurgiaoRepository cirurgiaoRepository(ICirurgiaoRepositoryJpa cirurgiaoRepository, CirurgiaoEntityMapper cirurgiaoEntityMapper) {
+        return new CirurgiaoRepository(cirurgiaoRepository, cirurgiaoEntityMapper);
     }
 
 }
