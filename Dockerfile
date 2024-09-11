@@ -1,11 +1,14 @@
-FROM openjdk:17-alpine AS builder
+# Usa a imagem base do OpenJDK 17 com o Maven pré-instalado
+FROM maven:3.8.5-openjdk-17-slim AS build
 
-RUN mkdir /app
+# Copia os arquivos do seu projeto para a imagem
+COPY pom.xml ./
+COPY src/ ./src/
 
-WORKDIR /app
-
-COPY target/*.jar app.jar
+# Executa o Maven para construir o projeto
+RUN mvn clean package
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando para iniciar a aplicação
+CMD ["java", "-jar", "target/boletim-medico-0.0.1.jar"]
