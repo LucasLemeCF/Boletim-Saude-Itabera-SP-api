@@ -11,7 +11,7 @@ Arquitetura - Miro: https://miro.com/app/board/uXjVK5NG8zs=/
 API Local - Swagger: http://localhost:8080/api/swagger-ui/index.html  
 <br>
 
-## Como Executar (Não finalizado)
+## Como Executar (Não finalizado) 
 
 ### Docker
 
