@@ -21,6 +21,7 @@ import boletimdasaude.infra.persitence.especialidade.entities.IResultadoDiarioEs
 import boletimdasaude.infra.persitence.especialidade.entities.ResultadoDiarioEspecialidadeEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class TabelaConfig {
@@ -41,6 +42,7 @@ public class TabelaConfig {
         return new DadosEspecialidadeInteractor(tabelaEspecialidadeRepository, resultadoMensalEspecialidadeRepository, ordemTabelaRepository);
     }
 
+    @Primary
     @Bean
     ITabelaEspecialidadeRepository iTabelaEspecialidadeRepository(IEspecialidadeRepositoryJpa especialidadeRepository, EspecialidadeEntityMapper especialidadeEntityMapper, ResultadoMensalEspecialidadeMapper resultadoMensalEspecialidadeMapper) {
         return new EspecialidadeRepository(especialidadeRepository, especialidadeEntityMapper, resultadoMensalEspecialidadeMapper);
