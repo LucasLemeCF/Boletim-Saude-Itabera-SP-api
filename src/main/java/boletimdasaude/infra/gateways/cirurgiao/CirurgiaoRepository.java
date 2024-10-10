@@ -98,7 +98,7 @@ public class CirurgiaoRepository implements ICirurgiaoRepository {
         CirurgiaoEntity newEntity = new CirurgiaoEntity(
                 id,
                 cirurgiao.nome() != null ? cirurgiao.nome() : oldEntity.getNome(),
-                ProcedimentoCirurgiaoEntityMapper.toEntityList(cirurgiao.procedimentos())
+                oldEntity.getProcedimentos()
         );
 
         return CirurgiaoEntityMapper.toDomain(cirurgiaoRepository.save(newEntity));

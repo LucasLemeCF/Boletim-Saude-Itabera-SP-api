@@ -97,7 +97,7 @@ public class EspecialidadeRepository implements IEspecialidadeRepository, ITabel
                 especialidade.medicoAtual() != null ? especialidade.medicoAtual() : oldEntity.getMedicoAtual(),
                 especialidade.metaDiariaAtual(),
                 especialidade.metaMensalAtual(),
-                resultadoMensalEspecialidadeMapper.toEntityList(especialidade.resultadosMensais())
+                oldEntity.getResultadosMensais()
         );
 
         return EspecialidadeEntityMapper.toDomain(repository.saveAndFlush(newEntity));
