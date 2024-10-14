@@ -26,8 +26,15 @@ public class ProcedimentoCirurgiaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProcedimentoCirurgiao>> buscarTodosCirurgioes() {
+    public ResponseEntity<List<ProcedimentoCirurgiao>> buscarTodosProcedimentosCirurgioes() {
         return ResponseEntity.ok().body(procedimentoProcedimentoCirurgiaoInteractor.buscarTodosProcedimentosCirurgioes());
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<List<ProcedimentoCirurgiao>> buscarTodosProcedimentosDoCirurgiao(
+            @PathVariable(value="id") Long id) {
+        List<ProcedimentoCirurgiao> procedimentosDoCirurgiao = procedimentoProcedimentoCirurgiaoInteractor.buscarTodosProcedimentosDoCirurgiao(id);
+        return ResponseEntity.ok().body(procedimentosDoCirurgiao);
     }
 
     @PatchMapping(path = "/{id}")
@@ -35,8 +42,8 @@ public class ProcedimentoCirurgiaoController {
             @PathVariable(value="id") Long id,
             @Valid @RequestBody ProcedimentoCirurgiaoRequest request
     ) {
-        ProcedimentoCirurgiao procedimentoProcedimentoCirurgiao = procedimentoProcedimentoCirurgiaoInteractor.editarProcedimentoCirurgiao(id, ProcedimentoCirurgiaoMapper.toDomain(request), request.cirurgiaoId());
-        return ResponseEntity.ok().body(procedimentoProcedimentoCirurgiao);
+        ProcedimentoCirurgiao procedimentoCirurgiao = procedimentoProcedimentoCirurgiaoInteractor.editarProcedimentoCirurgiao(id, ProcedimentoCirurgiaoMapper.toDomain(request), request.cirurgiaoId());
+        return ResponseEntity.ok().body(procedimentoCirurgiao);
     }
 
     @DeleteMapping("/{id}")

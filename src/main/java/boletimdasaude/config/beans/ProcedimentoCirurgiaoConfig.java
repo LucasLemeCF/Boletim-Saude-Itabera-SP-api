@@ -1,5 +1,6 @@
 package boletimdasaude.config.beans;
 
+import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
 import boletimdasaude.application.gateways.procedimentocirurgiao.IProcedimentoCirurgiaoRepository;
 import boletimdasaude.application.usecases.procedimentocirurgiao.ProcedimentoCirurgiaoInteractor;
 import boletimdasaude.infra.gateways.cirurgiao.CirurgiaoRepository;
@@ -15,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class ProcedimentoCirurgiaoConfig {
 
     @Bean
-    ProcedimentoCirurgiaoInteractor procedimentoCirurgiaoInteractor(IProcedimentoCirurgiaoRepository procedimentoCirurgiaoRepository) {
-        return new ProcedimentoCirurgiaoInteractor(procedimentoCirurgiaoRepository);
+    ProcedimentoCirurgiaoInteractor procedimentoCirurgiaoInteractor(IProcedimentoCirurgiaoRepository procedimentoCirurgiaoRepository, ICirurgiaoRepository cirurgiaoRepository) {
+        return new ProcedimentoCirurgiaoInteractor(procedimentoCirurgiaoRepository, cirurgiaoRepository);
     }
 
     @Bean
