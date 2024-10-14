@@ -2,6 +2,8 @@ package boletimdasaude.application.usecases.procedimentocirurgiao;
 
 import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
 import boletimdasaude.application.gateways.procedimentocirurgiao.IProcedimentoCirurgiaoRepository;
+import boletimdasaude.application.responses.procedimentoCirurgiao.ProcedimentoDoCirurgiaoResponse;
+import boletimdasaude.application.responses.procedimentoCirurgiao.ProcedimentosDoCirurgiaoResponse;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
 import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
 
@@ -27,18 +29,32 @@ public class ProcedimentoCirurgiaoInteractor {
         return procedimentoCirurgiaoRepository.buscarTodosProcedimentosCirurgioes();
     }
 
-    public List<ProcedimentoCirurgiao> buscarTodosProcedimentosDoCirurgiao(Long id) {
-        List<ProcedimentoCirurgiao> resultado = new ArrayList<>();
+    public ProcedimentosDoCirurgiaoResponse buscarTodosProcedimentosDoCirurgiao(Long id) {
+        List<ProcedimentoCirurgiao> procedimentos = new ArrayList<>();
+        String nomeCirurgiao = "";
 
         List<Cirurgiao> listaCirurgioes = cirurgiaoRepository.buscarTodosCirurgioes();
 
         for (Cirurgiao cirurgiao : listaCirurgioes) {
             if (Objects.equals(cirurgiao.id(), id)) {
-                resultado.addAll(cirurgiao.procedimentos());
+                nomeCirurgiao = cirurgiao.nome();
+                procedimentos.addAll(cirurgiao.procedimentos());
             }
         }
 
-        return resultado;
+        List<ProcedimentoDoCirurgiaoResponse> procedimentosResponse = converterProcedimentosResponse(procedimentos);
+
+        return new ProcedimentosDoCirurgiaoResponse(nomeCirurgiao, procedimentosResponse);
+    }
+
+    private List<ProcedimentoDoCirurgiaoResponse> converterProcedimentosResponse(List<ProcedimentoCirurgiao> procedimentos) {
+        List<ProcedimentoDoCirurgiaoResponse> procedimentosResponse = new ArrayList<>();
+
+        for (ProcedimentoCirurgiao procedimento : procedimentos) {
+            procedimentosResponse.add(new ProcedimentoDoCirurgiaoResponse(procedimento.id(), procedimento.nome()));
+        }
+
+        return procedimentosResponse;
     }
 
     public ProcedimentoCirurgiao editarProcedimentoCirurgiao(Long id, ProcedimentoCirurgiao procedimentoCirurgiao, Long cirurgiaoId) {

@@ -1,6 +1,7 @@
 package boletimdasaude.infra.controllers;
 import boletimdasaude.application.mappers.procedimentocirurgiao.ProcedimentoCirurgiaoMapper;
 import boletimdasaude.application.requests.procedimentocirurgiao.ProcedimentoCirurgiaoRequest;
+import boletimdasaude.application.responses.procedimentoCirurgiao.ProcedimentosDoCirurgiaoResponse;
 import boletimdasaude.application.usecases.procedimentocirurgiao.ProcedimentoCirurgiaoInteractor;
 import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
 import jakarta.validation.Valid;
@@ -31,9 +32,9 @@ public class ProcedimentoCirurgiaoController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<List<ProcedimentoCirurgiao>> buscarTodosProcedimentosDoCirurgiao(
+    public ResponseEntity<ProcedimentosDoCirurgiaoResponse> buscarTodosProcedimentosDoCirurgiao(
             @PathVariable(value="id") Long id) {
-        List<ProcedimentoCirurgiao> procedimentosDoCirurgiao = procedimentoProcedimentoCirurgiaoInteractor.buscarTodosProcedimentosDoCirurgiao(id);
+        ProcedimentosDoCirurgiaoResponse procedimentosDoCirurgiao = procedimentoProcedimentoCirurgiaoInteractor.buscarTodosProcedimentosDoCirurgiao(id);
         return ResponseEntity.ok().body(procedimentosDoCirurgiao);
     }
 
