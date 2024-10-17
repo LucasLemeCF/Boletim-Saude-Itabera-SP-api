@@ -1,18 +1,14 @@
 package boletimdasaude.application.usecases.tabela;
 
 import boletimdasaude.application.mappers.ordemtabela.CabecalhoOrdemTabelaMapper;
-import boletimdasaude.application.mappers.ordemtabela.EditarOrdemTabelaMapper;
 import boletimdasaude.application.mappers.ordemtabela.LinhaOrdemTabelaMapper;
-import boletimdasaude.application.requests.ordemtabela.CabecalhoOrdemTabelaRequest;
 import boletimdasaude.application.requests.ordemtabela.EditarOrdemTabelaRequest;
 import boletimdasaude.application.requests.ordemtabela.LinhaOrdemTabelaRequest;
-import boletimdasaude.application.requests.ordemtabela.TextoCabecalhoOrdemTabelaRequest;
 import boletimdasaude.application.requests.tabela.LinhaTabelaRequest;
 import boletimdasaude.application.requests.tabela.TabelaRequest;
 import boletimdasaude.application.usecases.ordemtabela.EditarOrdemTabelaInteractor;
 import boletimdasaude.domain.ordemtabela.DataOrdemTabela;
 import boletimdasaude.domain.ordemtabela.OrdemTabela;
-import boletimdasaude.domain.enums.TipoLinha;
 
 import java.util.ArrayList;
 import java.util.List;

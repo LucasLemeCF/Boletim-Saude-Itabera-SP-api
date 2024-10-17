@@ -140,14 +140,6 @@ public class DadosCirurgiaoInteractor {
         );
     }
 
-    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(String data) {
-        return resultadoMensalCirurgiaoRepository.buscarDadosCirurgioes(data);
-    }
-
-    public List<TabelaCabecalhoCirurgioesResponse> buscarCabecalhosCirurgioes(String data) {
-        return ordemTabelaRepository.buscarCabecalhosCirurgioes(data);
-    }
-
     public List<TabelaCabecalhoCirurgioesResponse> organizarDadosCirurgioes(String data) {
         List<TabelaCabecalhoCirurgioesResponse> cabecalhosCirurgioes = buscarCabecalhosCirurgioes(data);
         List<TabelaCirurgioesResponse> dadosCirurgioes = buscarDadosCirurgioes(data);
@@ -161,6 +153,14 @@ public class DadosCirurgiaoInteractor {
         agregarDadosCirurgioes();
 
         return cabecalhosCirurgioes;
+    }
+
+    public List<TabelaCabecalhoCirurgioesResponse> buscarCabecalhosCirurgioes(String data) {
+        return ordemTabelaRepository.buscarCabecalhosCirurgioes(data);
+    }
+
+    public List<TabelaCirurgioesResponse> buscarDadosCirurgioes(String data) {
+        return resultadoMensalCirurgiaoRepository.buscarDadosCirurgioes(data);
     }
 
     private void ordenarCabecalhosCirurgioes(List<TabelaCabecalhoCirurgioesResponse> cabecalhos) {

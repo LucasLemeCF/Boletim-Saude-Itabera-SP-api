@@ -56,16 +56,40 @@ public class OrdemTabelaRepository implements IOrdemTabelaRepository {
 
     @Override
     public OrdemTabela editarOrdemTabela(OrdemTabela ordemTabela) {
-        desativaOrdensAnteriores();
+        OrdemTabelaEntity ordemTabelaEntity = ordemTabelaEntityMapper.toEntity(ordemTabela);
 
-        OrdemTabelaEntity entity = ordemTabelaEntityMapper.toEntity(ordemTabela);
-        entity = repository.saveAndFlush(entity);
+        if (dataJaExiste(ordemTabelaEntity)) {
+            ordemTabelaEntity.setAtivo(false);
 
-        salvarDatasOrdemTabela(entity);
-        salvarLinhaTabela(entity);
-        salvarCabecalhoTabela(entity);
+            List<DataOrdemTabelaEntity> listaDatas = dataOrdemTabelaRepository.findAllByData(ordemTabelaEntity.getDatas().get(0).getData());
+            if (listaDatas != null) {
+                for (DataOrdemTabelaEntity entityOld : listaDatas) {
+                    dataOrdemTabelaRepository.delete(entityOld);
+                }
+            }
+        } else {
+            desativaOrdensAnteriores();
+        }
 
-        return OrdemTabelaEntityMapper.toDomain(entity);
+        ordemTabelaEntity = repository.saveAndFlush(ordemTabelaEntity);
+
+        salvarDatasOrdemTabela(ordemTabelaEntity);
+        salvarLinhaTabela(ordemTabelaEntity);
+        salvarCabecalhoTabela(ordemTabelaEntity);
+
+        return OrdemTabelaEntityMapper.toDomain(ordemTabelaEntity);
+    }
+
+    private boolean dataJaExiste(OrdemTabelaEntity ordemTabela) {
+       List<DataOrdemTabelaEntity> listaOrdemTabela = dataOrdemTabelaRepository.findAll();
+
+       for (DataOrdemTabelaEntity data : listaOrdemTabela) {
+           if (data.getData().equals(ordemTabela.getDatas().get(0).getData())) {
+               return true;
+           }
+       }
+
+       return false;
     }
 
     private void desativaOrdensAnteriores() {
