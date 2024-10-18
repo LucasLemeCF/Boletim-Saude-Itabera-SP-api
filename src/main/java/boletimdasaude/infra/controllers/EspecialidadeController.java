@@ -1,6 +1,7 @@
 package boletimdasaude.infra.controllers;
 import boletimdasaude.application.mappers.especialidade.EspecialidadeMapper;
 import boletimdasaude.application.requests.especialidade.EspecialidadeRequest;
+import boletimdasaude.application.responses.especialidade.EspecialidadeResponse;
 import boletimdasaude.application.usecases.especialidade.EspecialidadeInteractor;
 import boletimdasaude.domain.especialidade.Especialidade;
 import jakarta.validation.Valid;
@@ -30,6 +31,11 @@ public class EspecialidadeController {
     @GetMapping
     public ResponseEntity<List<Especialidade>> buscarTodasEspecialidade() {
         return ResponseEntity.ok().body(especialidadeInteractor.buscarTodasEspecialidades());
+    }
+
+    @GetMapping(path = "/nomes")
+    public ResponseEntity<List<EspecialidadeResponse>> buscarTodosNomesDeEspecialidade() {
+        return ResponseEntity.ok().body(especialidadeInteractor.buscarTodosNomesDeEspecialidade());
     }
 
     @GetMapping(path = "/{data}")
