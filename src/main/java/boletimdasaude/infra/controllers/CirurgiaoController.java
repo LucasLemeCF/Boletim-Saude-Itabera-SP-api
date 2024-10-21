@@ -1,6 +1,8 @@
 package boletimdasaude.infra.controllers;
 import boletimdasaude.application.mappers.cirurgiao.CirurgiaoMapper;
 import boletimdasaude.application.requests.cirurgiao.CirurgiaoRequest;
+import boletimdasaude.application.responses.cirurgiao.CirurgiaoResponse;
+import boletimdasaude.application.responses.especialidade.EspecialidadeResponse;
 import boletimdasaude.application.usecases.cirurgiao.CirurgiaoInteractor;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
 import jakarta.validation.Valid;
@@ -28,6 +30,11 @@ public class CirurgiaoController {
     @GetMapping
     public ResponseEntity<List<Cirurgiao>> buscarTodosCirurgioes() {
         return ResponseEntity.ok().body(cirurgiaoInteractor.buscarTodosCirurgioes());
+    }
+
+    @GetMapping(path = "/nomes")
+    public ResponseEntity<List<CirurgiaoResponse>> buscarTodosNomesDeCirurgioes() {
+        return ResponseEntity.ok().body(cirurgiaoInteractor.buscarTodosNomesDeCirurgioes());
     }
 
     @GetMapping(path = "/{data}")

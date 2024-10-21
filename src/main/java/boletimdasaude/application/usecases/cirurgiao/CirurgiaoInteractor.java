@@ -1,10 +1,14 @@
 package boletimdasaude.application.usecases.cirurgiao;
 
 import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
+import boletimdasaude.application.responses.cirurgiao.CirurgiaoResponse;
+import boletimdasaude.application.responses.especialidade.EspecialidadeResponse;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
 import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
 import boletimdasaude.domain.cirurgiao.ResultadoMensalCirurgiao;
+import boletimdasaude.domain.especialidade.Especialidade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CirurgiaoInteractor {
@@ -21,6 +25,18 @@ public class CirurgiaoInteractor {
 
     public List<Cirurgiao> buscarTodosCirurgioes() {
         return cirurgiaoRepository.buscarTodosCirurgioes();
+    }
+
+    public List<CirurgiaoResponse> buscarTodosNomesDeCirurgioes() {
+        List<CirurgiaoResponse> cirurgioesResponse = new ArrayList<>();
+
+        List<Cirurgiao> cirurgioes = cirurgiaoRepository.buscarTodosCirurgioes();
+
+        for (Cirurgiao cirurgiao : cirurgioes) {
+            cirurgioesResponse.add(new CirurgiaoResponse(cirurgiao.id(), cirurgiao.nome()));
+        }
+
+        return cirurgioesResponse;
     }
 
     public List<Cirurgiao> buscarTodosCirurgioesComDadosMes(String data) {
