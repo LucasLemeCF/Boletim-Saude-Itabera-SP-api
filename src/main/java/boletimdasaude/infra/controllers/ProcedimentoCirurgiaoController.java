@@ -1,6 +1,7 @@
 package boletimdasaude.infra.controllers;
 import boletimdasaude.application.mappers.procedimentocirurgiao.ProcedimentoCirurgiaoMapper;
 import boletimdasaude.application.requests.procedimentocirurgiao.ProcedimentoCirurgiaoRequest;
+import boletimdasaude.application.responses.procedimento.ProcedimentoResponse;
 import boletimdasaude.application.responses.procedimentoCirurgiao.ProcedimentosDoCirurgiaoResponse;
 import boletimdasaude.application.usecases.procedimentocirurgiao.ProcedimentoCirurgiaoInteractor;
 import boletimdasaude.domain.cirurgiao.ProcedimentoCirurgiao;
@@ -29,6 +30,11 @@ public class ProcedimentoCirurgiaoController {
     @GetMapping
     public ResponseEntity<List<ProcedimentoCirurgiao>> buscarTodosProcedimentosCirurgioes() {
         return ResponseEntity.ok().body(procedimentoProcedimentoCirurgiaoInteractor.buscarTodosProcedimentosCirurgioes());
+    }
+
+    @GetMapping(path = "/nomes")
+    public ResponseEntity<List<ProcedimentoResponse>> buscarTodosNomesDeProcedimentos() {
+        return ResponseEntity.ok().body(procedimentoProcedimentoCirurgiaoInteractor.buscarTodosNomesDeProcedimentos());
     }
 
     @GetMapping(path = "/{id}")

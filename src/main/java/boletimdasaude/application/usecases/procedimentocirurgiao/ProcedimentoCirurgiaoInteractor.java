@@ -2,6 +2,7 @@ package boletimdasaude.application.usecases.procedimentocirurgiao;
 
 import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
 import boletimdasaude.application.gateways.procedimentocirurgiao.IProcedimentoCirurgiaoRepository;
+import boletimdasaude.application.responses.procedimento.ProcedimentoResponse;
 import boletimdasaude.application.responses.procedimentoCirurgiao.ProcedimentoDoCirurgiaoResponse;
 import boletimdasaude.application.responses.procedimentoCirurgiao.ProcedimentosDoCirurgiaoResponse;
 import boletimdasaude.domain.cirurgiao.Cirurgiao;
@@ -27,6 +28,20 @@ public class ProcedimentoCirurgiaoInteractor {
 
     public List<ProcedimentoCirurgiao> buscarTodosProcedimentosCirurgioes() {
         return procedimentoCirurgiaoRepository.buscarTodosProcedimentosCirurgioes();
+    }
+
+    public List<ProcedimentoResponse> buscarTodosNomesDeProcedimentos() {
+        List<ProcedimentoResponse> procedimentoCirurgioesResponse = new ArrayList<>();
+
+        List<Cirurgiao> cirurgioes = cirurgiaoRepository.buscarTodosCirurgioes();
+
+        for (Cirurgiao cirurgiao : cirurgioes) {
+            for (ProcedimentoCirurgiao procedimento : cirurgiao.procedimentos()) {
+                procedimentoCirurgioesResponse.add(new ProcedimentoResponse(procedimento.id(), cirurgiao.nome(), procedimento.nome()));
+            }
+        }
+
+        return procedimentoCirurgioesResponse;
     }
 
     public ProcedimentosDoCirurgiaoResponse buscarTodosProcedimentosDoCirurgiao(Long id) {

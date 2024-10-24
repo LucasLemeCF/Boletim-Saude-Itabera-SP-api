@@ -1,5 +1,6 @@
 package boletimdasaude.infra.controllers;
 
+import boletimdasaude.application.responses.ordemTabela.OrdemTabelaResponse;
 import boletimdasaude.application.usecases.ordemtabela.EditarOrdemTabelaInteractor;
 import boletimdasaude.domain.ordemtabela.OrdemTabela;
 import boletimdasaude.application.mappers.ordemtabela.EditarOrdemTabelaMapper;
@@ -31,6 +32,13 @@ public class EditarTabelaController {
             @PathVariable(value="data") String data
     ) {
         return ResponseEntity.ok().body(editarTabelaInteractor.buscarOrdemTabela(data));
+    }
+
+    @GetMapping(path = "/teste/{data}")
+    public ResponseEntity<OrdemTabelaResponse> buscarOrdemTabelaNovo(
+            @PathVariable(value="data") String data
+    ) {
+        return ResponseEntity.ok().body(editarTabelaInteractor.buscarOrdemTabelaNovo(data));
     }
 
 }

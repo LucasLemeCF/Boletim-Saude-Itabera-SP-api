@@ -1,7 +1,11 @@
 package boletimdasaude.config.beans;
 
+import boletimdasaude.application.gateways.cirurgiao.ICirurgiaoRepository;
+import boletimdasaude.application.gateways.cirurgiao.IResultadoMensalCirurgiaoRepository;
+import boletimdasaude.application.gateways.especialidade.IResultadoMensalEspecialidadeRepository;
 import boletimdasaude.application.gateways.ordemtabela.IOrdemTabelaRepository;
 import boletimdasaude.application.usecases.ordemtabela.EditarOrdemTabelaInteractor;
+import boletimdasaude.application.usecases.ordemtabela.MontarOrdemTabelaInteractor;
 import boletimdasaude.infra.gateways.ordemtabela.LinhaTabelaRepository;
 import boletimdasaude.infra.gateways.ordemtabela.OrdemTabelaRepository;
 import boletimdasaude.infra.gateways.ordemtabela.mappers.CabecalhoTabelaEntityMapper;
@@ -16,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
 public class OrdemTabelaConfig {
 
     @Bean
-    EditarOrdemTabelaInteractor atualizarTabela(IOrdemTabelaRepository tabelaRepository) {
-        return new EditarOrdemTabelaInteractor(tabelaRepository);
+    EditarOrdemTabelaInteractor atualizarTabela(IOrdemTabelaRepository tabelaRepository, MontarOrdemTabelaInteractor montarOrdemTabelaInteractor) {
+        return new EditarOrdemTabelaInteractor(tabelaRepository, montarOrdemTabelaInteractor);
     }
 
     @Bean
@@ -52,6 +56,14 @@ public class OrdemTabelaConfig {
     @Bean
     LinhaTabelaRepository linhaTabelaRepository(ILinhaTabelaRepositoryJpa itemEspecialidadeRepository) {
         return new LinhaTabelaRepository(itemEspecialidadeRepository);
+    }
+
+    @Bean
+    MontarOrdemTabelaInteractor montarOrdemTabelaInteractor(IOrdemTabelaRepository tabelaRepository,
+                                                            IResultadoMensalEspecialidadeRepository resultadoMensalEspecialidadeRepository,
+                                                            IResultadoMensalCirurgiaoRepository resultadoMensalCirurgiaoRepository,
+                                                            ICirurgiaoRepository cirurgiaoRepository) {
+        return new MontarOrdemTabelaInteractor(tabelaRepository, resultadoMensalEspecialidadeRepository, resultadoMensalCirurgiaoRepository, cirurgiaoRepository);
     }
 
 }
